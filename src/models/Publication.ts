@@ -120,25 +120,4 @@ Publication.init(
   }
 );
 
-// Relaciones
-Publication.belongsTo(Person, { foreignKey: "personId", as: "person" });
-Publication.belongsTo(City, { foreignKey: "cityId", as: "city" });
-Publication.belongsTo(Status, { foreignKey: "statusId", as: "status" });
-Publication.belongsTo(VehicleVersion, {
-  foreignKey: "vehicleVersionId",
-  as: "vehicleVersion",
-});
-Publication.belongsTo(VehicleCategory, {
-  foreignKey: "vehicleCategoryId",
-  as: "vehicleCategory",
-});
-Publication.hasMany(PublicationMediaResource, {
-  foreignKey: "publicationId",
-  as: "publicationMediaResources",
-});
-Publication.hasOne(VehicleCustomData, {
-  foreignKey: "publicationId",
-  as: "vehicleCustomData",
-});
-
 export { Publication };

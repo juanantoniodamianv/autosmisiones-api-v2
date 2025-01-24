@@ -30,10 +30,4 @@ VehicleCategory.init(
   }
 );
 
-// Relación hasMany con VehicleModel
-VehicleCategory.hasMany(VehicleModel, {
-  foreignKey: "vehicleCategoryId",
-  as: "models",
-});
-
 export { VehicleCategory };

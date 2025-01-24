@@ -37,10 +37,4 @@ VehicleCustomData.init(
   }
 );
 
-// Relación belongsTo con Publication
-VehicleCustomData.belongsTo(Publication, {
-  foreignKey: "publicationId",
-  as: "publication",
-});
-
 export { VehicleCustomData };

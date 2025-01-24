@@ -30,10 +30,4 @@ PublicationMediaResource.init(
   }
 );
 
-// Relación belongsTo con Publication
-PublicationMediaResource.belongsTo(Publication, {
-  foreignKey: "publicationId",
-  as: "publication",
-});
-
 export { PublicationMediaResource };

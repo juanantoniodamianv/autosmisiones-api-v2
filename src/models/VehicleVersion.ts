@@ -30,10 +30,4 @@ VehicleVersion.init(
   }
 );
 
-// Relación belongsTo con VehicleModel
-VehicleVersion.belongsTo(VehicleModel, {
-  foreignKey: "vehicleModelId",
-  as: "vehicleModel",
-});
-
 export { VehicleVersion };

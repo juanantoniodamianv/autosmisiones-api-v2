@@ -44,7 +44,4 @@ Phone.init(
   }
 );
 
-// Relación belongsTo con Person
-Phone.belongsTo(Person, { foreignKey: "personId", as: "person" });
-
 export { Phone };

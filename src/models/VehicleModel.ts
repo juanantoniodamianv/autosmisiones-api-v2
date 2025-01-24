@@ -34,18 +34,4 @@ VehicleModel.init(
   }
 );
 
-// Relaciones
-VehicleModel.belongsTo(VehicleMake, {
-  foreignKey: "vehicleMakeId",
-  as: "vehicleMake",
-});
-VehicleModel.belongsTo(VehicleCategory, {
-  foreignKey: "vehicleCategoryId",
-  as: "vehicleCategory",
-});
-VehicleModel.hasMany(VehicleVersion, {
-  foreignKey: "vehicleModelId",
-  as: "versions",
-});
-
 export { VehicleModel };

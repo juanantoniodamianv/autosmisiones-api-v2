@@ -51,12 +51,4 @@ Person.init(
   }
 );
 
-// Relaciones
-Person.hasMany(Phone, { foreignKey: "personId", as: "phones" });
-Person.hasMany(Favorite, { foreignKey: "personId", as: "favorites" });
-Person.hasMany(PersonMediaResource, {
-  foreignKey: "personId",
-  as: "personMediaResources",
-});
-
 export { Person };

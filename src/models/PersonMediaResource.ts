@@ -35,10 +35,4 @@ PersonMediaResource.init(
   }
 );
 
-// Relación belongsTo con Person
-PersonMediaResource.belongsTo(Person, {
-  foreignKey: "personId",
-  as: "person",
-});
-
 export { PersonMediaResource };

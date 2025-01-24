@@ -27,11 +27,4 @@ Favorite.init(
   }
 );
 
-// Relaciones
-Favorite.belongsTo(Person, { foreignKey: "personId", as: "person" });
-Favorite.belongsTo(Publication, {
-  foreignKey: "publicationId",
-  as: "publication",
-});
-
 export { Favorite };
