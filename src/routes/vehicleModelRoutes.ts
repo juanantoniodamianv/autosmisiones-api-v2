@@ -1,22 +1,21 @@
-// src/routes/vehicleMakeRoutes.ts
 import express from "express";
-import { vehicleMakeController } from "../controllers/VehicleMakeController";
+import { vehicleModelController } from "../controllers/VehicleModelController";
 
 const router = express.Router();
 
 // Obtener todas las marcas de vehículos
-router.get("/vehicle-makes", vehicleMakeController.getAllVehicleMakes);
+router.get("/vehicle-models", vehicleModelController.getAllVehicleModels);
 
 // Obtener una marca de vehículo por ID
-router.get("/vehicle-makes/:id", vehicleMakeController.getVehicleMakeById);
+router.get("/vehicle-models/:id", vehicleModelController.getVehicleModelById);
 
 // Crear una nueva marca de vehículo
-router.post("/vehicle-makes", vehicleMakeController.createVehicleMake);
+router.post("/vehicle-models", vehicleModelController.createVehicleModel);
 
 // Actualizar una marca de vehículo por ID
-router.put("/vehicle-makes/:id", vehicleMakeController.updateVehicleMake);
+router.put("/vehicle-models/:id", vehicleModelController.updateVehicleModel);
 
 // Eliminar una marca de vehículo por ID
-router.delete("/vehicle-makes/:id", vehicleMakeController.deleteVehicleMake);
+router.delete("/vehicle-models/:id", vehicleModelController.deleteVehicleModel);
 
-export { router as vehicleMakeRoutes };
+export { router as vehicleModelRoutes };
