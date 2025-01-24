@@ -1,14 +1,10 @@
 // src/models/Province.ts
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
-import { City } from "./City";
 
 class Province extends Model {
   public id!: number;
   public name!: string;
-
-  // Relaciones
-  public readonly cities?: City[];
 }
 
 Province.init(
@@ -29,11 +25,5 @@ Province.init(
     tableName: "provinces",
   }
 );
-
-// Relación hasMany con City
-Province.hasMany(City, {
-  foreignKey: "provinceId",
-  as: "cities",
-});
 
 export { Province };

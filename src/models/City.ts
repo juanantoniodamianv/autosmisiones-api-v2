@@ -1,15 +1,11 @@
 // src/models/City.ts
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
-import { Province } from "./Province";
 
 class City extends Model {
   public id!: number;
   public name!: string;
   public provinceId!: number;
-
-  // Relaciones
-  public readonly province?: Province;
 }
 
 City.init(
@@ -34,11 +30,5 @@ City.init(
     tableName: "cities",
   }
 );
-
-// Relación belongsTo con Province
-City.belongsTo(Province, {
-  foreignKey: "provinceId",
-  as: "province",
-});
 
 export { City };
