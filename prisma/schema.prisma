@@ -1,0 +1,162 @@
+// src/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo Status
+model Status {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  publications Publication[]
+}
+
+// Modelo PublicationMediaResource
+model PublicationMediaResource {
+  id            Int        @id @default(autoincrement())
+  url           String
+  publicationId Int
+  publication   Publication @relation(fields: [publicationId], references: [id])
+}
+
+// Modelo Publication
+model Publication {
+  id                   Int                    @id @default(autoincrement())
+  title                String
+  description          String?
+  price                Float?
+  previousPrice        Float?
+  currencyType         String                 @default("$")
+  condition            String
+  year                 Int?
+  km                   Int?
+  color                String?
+  neighborhood         String?
+  transmission         String?
+  engine               String?
+  fuelType             String?
+  doors                String?
+  uniqueOwner          Boolean                @default(false)
+  slugUrl              String                 @unique
+  swap                 Boolean                @default(false)
+  ownerPhone           String?
+  marketDiscount       Boolean                @default(false)
+  
+  personId            Int
+  person              Person                @relation(fields: [personId], references: [id])
+
+  cityId              Int
+  city                City                  @relation(fields: [cityId], references: [id])
+  
+  statusId            Int
+  status              Status                @relation(fields: [statusId], references: [id])
+  
+  vehicleCategoryId   Int?
+  vehicleCategory     VehicleCategory?      @relation(fields: [vehicleCategoryId], references: [id])
+
+  vehicleModelId    Int?
+  vehicleModel      VehicleModel?       @relation(fields: [vehicleModelId], references: [id])
+
+  vehicleMakeId    Int?
+  vehicleMake      VehicleMake?       @relation(fields: [vehicleMakeId], references: [id])
+
+  vehicleVersionId    Int?
+  vehicleVersion      VehicleVersion?       @relation(fields: [vehicleVersionId], references: [id])
+  
+  publicationMediaResources PublicationMediaResource[]
+  vehicleCustomDataId Int?
+}
+
+// Modelo Province
+model Province {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  cities City[]
+}
+
+// Modelo Phone
+model Phone {
+  id            Int    @id @default(autoincrement())
+  phone         String
+  type          String @default("wp")
+  verified      Boolean @default(false)
+  verifiedToken String?
+
+  personId      Int
+  person        Person @relation(fields: [personId], references: [id])
+}
+
+// Modelo PersonMediaResource
+model PersonMediaResource {
+  id          Int    @id @default(autoincrement())
+  url         String
+  imageType   String
+
+  personId    Int
+  person      Person @relation(fields: [personId], references: [id])
+}
+
+// Modelo Person
+model Person {
+  id                  Int                    @id @default(autoincrement())
+  firstName           String
+  lastName            String?
+  maxPublications     Int                    @default(3)
+  openingHours        String?
+  locationStreet      String?
+  
+  phones              Phone[]
+  personMediaResources PersonMediaResource[]
+  publications        Publication[]
+}
+
+// Modelo City
+model City {
+  id          Int      @id @default(autoincrement())
+  name        String
+  provinceId  Int
+
+  province    Province @relation(fields: [provinceId], references: [id])
+  publications Publication[]
+}
+
+// Modelo VehicleVersion
+model VehicleVersion {
+  id          Int      @id @default(autoincrement())
+  name        String
+  vehicleModelId Int
+  vehicleModel VehicleModel @relation(fields: [vehicleModelId], references: [id])
+
+  publications Publication[]
+}
+
+// Modelo VehicleCategory
+model VehicleCategory {
+  id          Int      @id @default(autoincrement())
+  name        String
+  publications Publication[]
+}
+
+// Modelo VehicleModel
+model VehicleModel {
+  id          Int      @id @default(autoincrement())
+  name        String
+  vehicleMakeId Int
+  vehicleMake VehicleMake @relation(fields: [vehicleMakeId], references: [id])
+
+  vehicleVersions VehicleVersion[]
+  publications Publication[]
+}
+
+// Modelo VehicleMake
+model VehicleMake {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  vehicleModels VehicleModel[]
+
+  publications Publication[]
+}

@@ -1,5 +1,5 @@
 import express from "express";
-import { sequelize } from "./config/database";
+
 import { cityRoutes } from "./routes/cityRoutes";
 import { personRoutes } from "./routes/personRoutes";
 import { favoriteRoutes } from "./routes/favoriteRoutes";
@@ -15,18 +15,6 @@ import { vehicleMakeRoutes } from "./routes/vehicleMakeRoutes";
 import { vehicleModelRoutes } from "./routes/vehicleModelRoutes";
 import { vehicleVersionRoutes } from "./routes/vehicleVersionRoutes";
 
-// Importa otras rutas según sea necesario
-
-async function syncDatabase() {
-  try {
-    // Sincroniza todos los modelos con la base de datos
-    await sequelize.sync({ force: true }); // Usa { force: true } solo en desarrollo
-    console.log("Base de datos sincronizada correctamente.");
-  } catch (error) {
-    console.error("Error al sincronizar la base de datos:", error);
-  }
-}
-
 const app = express();
 
 app.use(express.json());
@@ -40,7 +28,7 @@ app.use("/api/phone", phoneRoutes);
 app.use("/api/province", provinceRoutes);
 app.use("/api/publicationMediaResource", publicationMediaResourceRoutes);
 app.use("/api/publication", publicationRoutes);
-app.use("/api/status", statusRoutes);
+//app.use("/api/status", statusRoutes);
 app.use("/api/vehicleCategory", vehicleCategoryRoutes);
 app.use("/api/vehicleCustomData", vehicleCustomDataRoutes);
 app.use("/api/vehicleMake", vehicleMakeRoutes);
@@ -51,5 +39,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-syncDatabase();
