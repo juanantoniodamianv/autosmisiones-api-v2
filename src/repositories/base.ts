@@ -9,9 +9,14 @@ abstract class BaseRepository<T extends { id: number }> {
     this.model = model;
   }
 
-  async findAll(): Promise<T[]> {
+  async findAll(where?: {}): Promise<T[]> {
     // @ts-ignore - Dynamically access the Prisma model
-    return prisma[this.model].findMany();
+    return prisma[this.model].findMany({ where });
+  }
+
+  async findOne(where?: {}): Promise<T> {
+    // @ts-ignore - Dynamically access the Prisma model
+    return prisma[this.model].findUnique({ where });
   }
 
   async findById(id: number): Promise<T | null> {
@@ -40,6 +45,19 @@ abstract class BaseRepository<T extends { id: number }> {
     // @ts-ignore - Dynamically access the Prisma model
     return prisma[this.model].delete({
       where: { id },
+    });
+  }
+
+  async upsert(
+    where: {},
+    updateData: Partial<T>,
+    createData: Omit<T, "id">
+  ): Promise<T> {
+    // @ts-ignore - Dynamically access the Prisma model
+    return prisma[this.model].upsert({
+      where,
+      update: updateData,
+      create: createData,
     });
   }
 }

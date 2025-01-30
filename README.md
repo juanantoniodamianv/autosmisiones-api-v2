@@ -1,11 +1,13 @@
 ## Requirements
 
-- Node 22
+- Node.js 22
+- PostgreSQL
 
 ## How to run in local
 
-`npm i`
-`npx ts-node src/app.ts`
+- Copy the `.env-example` environment variables into you local `.env` file
+- Then run `npm i` to install the dependencies
+- Then run `npx ts-node src/app.ts` to run the application
 
 ### TODO
 
