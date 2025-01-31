@@ -1,6 +1,6 @@
 import express, { Router, Request } from "express";
 import { VehicleDataController } from "../controllers/VehicleDataController";
-import { MockVehicleDataService } from "../services/mockVehicleDataService";
+import { MockVehicleDataService } from "../services/mock/mockVehicleDataService";
 
 interface GetCategoryRequest extends Request {
   params: {

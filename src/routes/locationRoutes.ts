@@ -1,6 +1,6 @@
 import express, { Router, Request } from "express";
 import { LocationController } from "../controllers/LocationController";
-import { MockLocationService } from "../services/mockLocationService";
+import { MockLocationService } from "../services/mock/mockLocationService";
 
 interface GetCityRequest extends Request {
   query: {

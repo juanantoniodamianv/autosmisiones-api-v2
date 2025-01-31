@@ -1,31 +1,10 @@
-import { IVehicleDataService } from "../controllers/VehicleDataController";
-
-// Define mock data interfaces
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Make {
-  id: string;
-  name: string;
-  categoryId: string;
-}
-
-interface Model {
-  id: string;
-  name: string;
-  makeId: string;
-}
-
-interface Version {
-  id: string;
-  name: string;
-  modelId: string;
-  year: number;
-  engine?: string;
-}
+import { IVehicleDataService } from "../../controllers/VehicleDataController";
+import {
+  Category,
+  Make,
+  Model,
+  Version,
+} from "../interfaces/IVehicleDataService";
 
 export class MockVehicleDataService implements IVehicleDataService {
   // Mock data storage

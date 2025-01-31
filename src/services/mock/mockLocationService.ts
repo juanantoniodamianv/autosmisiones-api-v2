@@ -1,18 +1,8 @@
-interface ILocationService {
-  getAllProvinces(): Promise<any[]>;
-  getCitiesByProvince(provinceId: string): Promise<any[]>;
-}
-
-interface Province {
-  id: string;
-  name: string;
-}
-
-interface City {
-  id: string;
-  name: string;
-  provinceId: string;
-}
+import {
+  City,
+  ILocationService,
+  Province,
+} from "../interfaces/ILocationService";
 
 export class MockLocationService implements ILocationService {
   private provinces: Province[] = [
