@@ -3,7 +3,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "test": "node --test --require ts-node/register ./src/tests/**/*.test.ts",
     "test:watch": "node --watch --test --require ts-node/register ./src/tests/**/*.test.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
