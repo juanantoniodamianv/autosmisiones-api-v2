@@ -1,20 +1,28 @@
-// src/controllers/PersonController.ts
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { PersonRepository } from "../repositories/Person";
+export interface IPersonService {
+  findAll(query?: any): Promise<any[]>;
+  findById(id: number): Promise<any | null>;
+  create(data: any): Promise<any>;
+  update(id: number, data: any): Promise<any | null>;
+  delete(id: number): Promise<void>;
+  findOne(query: any): Promise<any | null>;
+}
 
-// TODO:
-// Do I need create as a singleton this one?
-class PersonController {
-  person = new PersonRepository();
+export class PersonController {
+  private personService: IPersonService;
+
+  constructor(personService: IPersonService) {
+    this.personService = personService;
+  }
 
   // TODO:
   // paginate
   public async getAllPeople(req: Request, res: Response): Promise<void> {
     try {
-      const people = await this.person.findAll();
+      const people = await this.personService.findAll();
       res.json(people);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -27,7 +35,7 @@ class PersonController {
 
   public async getPersonById(req: Request, res: Response): Promise<void> {
     try {
-      const person = await this.person.findById(parseInt(req.params.id));
+      const person = await this.personService.findById(parseInt(req.params.id));
       if (person) {
         res.json(person);
       } else {
@@ -44,7 +52,7 @@ class PersonController {
 
   public async createPerson(req: Request, res: Response): Promise<void> {
     try {
-      const person = await this.person.create(req.body);
+      const person = await this.personService.create(req.body);
       res.status(201).json(person);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -58,9 +66,9 @@ class PersonController {
   public async updatePerson(req: Request, res: Response): Promise<void> {
     try {
       const personId = parseInt(req.params.id);
-      const person = await this.person.findById(personId);
+      const person = await this.personService.findById(personId);
       if (person) {
-        await this.person.update(personId, req.body);
+        await this.personService.update(personId, req.body);
         res.json(person);
       } else {
         res.status(404).json({ error: "Person not found" });
@@ -77,9 +85,9 @@ class PersonController {
   public async deletePerson(req: Request, res: Response): Promise<void> {
     try {
       const personId = parseInt(req.params.id);
-      const person = await this.person.findById(personId);
+      const person = await this.personService.findById(personId);
       if (person) {
-        await this.person.delete(personId);
+        await this.personService.delete(personId);
         res.status(204).send();
       } else {
         res.status(404).json({ error: "Person not found" });
@@ -96,7 +104,9 @@ class PersonController {
   public async signUp(req: Request, res: Response): Promise<void> {
     try {
       // Person exists?
-      const person = await this.person.findAll({ email: req.body.email });
+      const person = await this.personService.findAll({
+        email: req.body.email,
+      });
       if (person) {
         res.status(400).json({ error: "Person already exists" });
         return;
@@ -104,7 +114,7 @@ class PersonController {
       const password = req.body.password;
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const newPerson = await this.person.create({
+      const newPerson = await this.personService.create({
         ...req.body,
         password: hashedPassword,
       });
@@ -121,7 +131,9 @@ class PersonController {
 
   public async signIn(req: Request, res: Response): Promise<void> {
     try {
-      const person = await this.person.findOne({ email: req.body.email });
+      const person = await this.personService.findOne({
+        email: req.body.email,
+      });
       // password may be null, in the scenario that we create a new one without active, Ex: invitations to register
       if (!person || !person.password) {
         res.status(404).json({ error: "Person not found" });
@@ -149,5 +161,3 @@ class PersonController {
     }
   }
 }
-
-export const personController = new PersonController();
