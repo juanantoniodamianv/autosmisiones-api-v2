@@ -1,9 +1,7 @@
 {
-  "type": "module",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "test": "node --test --require ts-node/register ./src/tests/**/*.test.ts",
-    "test:watch": "node --watch --test --require ts-node/register ./src/tests/**/*.test.ts",
+    "test": "find ./src -name '*.test.ts' -exec node --test --require ts-node/register --test {} +",
     "lint": "tsc --noEmit && eslint .",
     "postinstall": "npx prisma generate"
   },
