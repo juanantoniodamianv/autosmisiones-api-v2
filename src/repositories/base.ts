@@ -10,31 +10,31 @@ abstract class BaseRepository<T extends { id: number }> {
   }
 
   async findAll(where?: {}): Promise<T[]> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].findMany({ where });
   }
 
   async findOne(where?: {}): Promise<T> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].findUnique({ where });
   }
 
   async findById(id: number): Promise<T | null> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].findUnique({
       where: { id },
     });
   }
 
   async create(data: Omit<T, "id">): Promise<T> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].create({
       data,
     });
   }
 
   async update(id: number, data: Partial<T>): Promise<T> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].update({
       where: { id },
       data,
@@ -42,7 +42,7 @@ abstract class BaseRepository<T extends { id: number }> {
   }
 
   async delete(id: number): Promise<T> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].delete({
       where: { id },
     });
@@ -53,7 +53,7 @@ abstract class BaseRepository<T extends { id: number }> {
     updateData: Partial<T>,
     createData: Omit<T, "id">
   ): Promise<T> {
-    // @ts-ignore - Dynamically access the Prisma model
+    // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].upsert({
       where,
       update: updateData,
