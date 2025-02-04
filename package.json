@@ -1,8 +1,9 @@
 {
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "test": "node --test --require ts-node/register ./src/tests/**/*.test.ts",
-    "test:watch": "node --watch --test --require ts-node/register ./src/tests/**/*.test.ts"
+    "test": "find ./src -name '*.test.ts' -exec node --test --require ts-node/register --test {} +",
+    "lint": "tsc --noEmit && eslint .",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
@@ -22,6 +23,7 @@
     "typescript": "^5.7.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
     "@types/bcrypt": "^5.0.2",
     "@types/express-session": "^1.18.1",
     "@types/jsonwebtoken": "^9.0.8",
@@ -29,6 +31,9 @@
     "@types/passport-facebook": "^3.0.3",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
-    "ts-node-dev": "^2.0.0"
+    "eslint": "^9.19.0",
+    "globals": "^15.14.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript-eslint": "^8.23.0"
   }
 }
