@@ -11,6 +11,7 @@
 
 ### TODO
 
+- [ ] Frontend: mover sesion del localstorage a utilzar la cookie que se setea en el backend
 - [ ] Seed para data de vehiculos
 - [ ] Seed para data de provincia/ciudad
 - [ ] Conexion con frontend

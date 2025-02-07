@@ -1,19 +1,21 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import session from "express-session";
-import passport from "passport";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
-import { apiRouter } from "./routes";
-import { initPassport, isAuthenticated } from "./passport";
+import { apiRouter, authRoutes } from "./routes";
+import { initPassport } from "./passport";
+
+// TODO: should we move these env to a file
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
+const JWT_SECRET = process.env.JWT_SECRET || "JWT_SECRET";
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-app.use(express.json());
-
-app.use("/api", apiRouter);
-
 app.use(
   session({
-    secret: "This is a secret",
+    secret: JWT_SECRET,
     resave: false,
     saveUninitialized: false,
   })
@@ -21,42 +23,23 @@ app.use(
 
 initPassport(app);
 
-app.post(
-  "/api/login",
-  passport.authenticate("local"),
-  (req: Request, res: Response) => {
-    res.json("You logged in!!!");
-  }
-);
+app.use(express.json());
 
-app.get("/api/user", isAuthenticated, (req: Request, res: Response) => {
-  res.send({ user: req.user });
-});
-
-// Google routes
-app.get("/auth/google", passport.authenticate("google"));
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/login",
+// Allow requests from your frontend deployed URL with credentials
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
   })
 );
+app.use(cookieParser("SECRET_KEY"));
 
-// Facebook routes
-app.get(
-  "/auth/facebook",
-  passport.authenticate("facebook", { scope: ["email"] })
-);
-app.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/login",
-  })
-);
+// API routes
+app.use("/api", apiRouter);
 
-const PORT = process.env.PORT || 3000;
+// Authentication routes
+app.use("/auth", authRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
