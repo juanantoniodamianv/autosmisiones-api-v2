@@ -106,16 +106,9 @@ router.post("/login", (req, res, next) => {
 
 router.post("/register", personController.signUp);
 
-router.post("/removeSession", (req: Request, res: Response) => {
-  res.cookie("token", "none", {
-    path: "/",
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 1,
-  });
-
-  res.json({ message: "Logout successful" });
+router.get("/removeSession", (req: Request, res: Response) => {
+  res.clearCookie("token");
+  res.redirect(FRONTEND_URL);
 });
 
 // Endpoint to know if user is authenticated
