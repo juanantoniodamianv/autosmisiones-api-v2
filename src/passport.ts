@@ -82,6 +82,14 @@ export function initPassport(app: Express) {
                   },
                 ],
               },
+              personMediaResources: {
+                create: [
+                  {
+                    url: profile._json.picture,
+                    imageType: "nose", // TODO: update type here
+                  },
+                ],
+              },
             });
           }
 
@@ -135,6 +143,14 @@ export function initPassport(app: Express) {
                     refreshToken,
                     createdAt: new Date(),
                     updatedAt: new Date(),
+                  },
+                ],
+              },
+              personMediaResources: {
+                create: [
+                  {
+                    url: profile._json.picture,
+                    imageType: "nose", // TODO: update type here
                   },
                 ],
               },
@@ -196,6 +212,7 @@ export function isAuthenticated(
         role: true,
         updatedAt: true,
         accounts: true,
+        personMediaResources: true,
       };
 
       const user = await person.findOne(
