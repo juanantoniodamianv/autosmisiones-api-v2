@@ -13,10 +13,9 @@ const personService = isTestEnvironment
 
 const personController = new PersonController(personService);
 
-router.get("/people", personController.getAllPeople);
-router.get("/people/:id", personController.getPersonById);
-router.post("/people", personController.createPerson);
-router.put("/people/:id", personController.updatePerson);
-router.delete("/people/:id", personController.deletePerson);
+router.get("/", personController.getAllPeople);
+router.get("/:id", personController.getPersonById);
+router.put("/:id", personController.updatePerson);
+router.delete("/:id", personController.deletePerson);
 
 export default router;

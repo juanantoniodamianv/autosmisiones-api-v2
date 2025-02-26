@@ -5,13 +5,12 @@ import { Express, Request, Response, NextFunction } from "express";
 import { Person } from "@prisma/client";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as FacebookStrategy } from "passport-facebook";
+import jwt from "jsonwebtoken";
 
 import { PersonRepository } from "./repositories/Person";
-import { AccountRepository } from "./repositories/Account";
 
 export function initPassport(app: Express) {
   const person = new PersonRepository();
-  const account = new AccountRepository();
 
   // Initialize passport middleware
   app.use(passport.initialize());
@@ -71,20 +70,30 @@ export function initPassport(app: Express) {
               maxPublications: 3,
               openingHours: null,
               locationStreet: null,
-            });
-
-            await account.create({
-              userId: user.id,
-              provider: "google",
-              providerId: profile.id,
-              accessToken,
-              refreshToken,
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              accounts: {
+                create: [
+                  {
+                    provider: "google",
+                    providerId: profile.id,
+                    accessToken,
+                    refreshToken,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  },
+                ],
+              },
+              personMediaResources: {
+                create: [
+                  {
+                    url: profile._json.picture,
+                    imageType: "nose", // TODO: update type here
+                  },
+                ],
+              },
             });
           }
 
-          return done(null, user);
+          return done(null, { ...user, providerId: profile.id });
         } catch (error) {
           return done(
             error instanceof Error
@@ -125,16 +134,26 @@ export function initPassport(app: Express) {
               maxPublications: 3,
               openingHours: null,
               locationStreet: null,
-            });
-
-            await account.create({
-              userId: user.id,
-              provider: "facebook",
-              providerId: profile.id,
-              accessToken,
-              refreshToken,
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              accounts: {
+                create: [
+                  {
+                    provider: "facebook",
+                    providerId: profile.id,
+                    accessToken,
+                    refreshToken,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  },
+                ],
+              },
+              personMediaResources: {
+                create: [
+                  {
+                    url: profile._json.picture,
+                    imageType: "nose", // TODO: update type here
+                  },
+                ],
+              },
             });
           }
           return done(null, user);
@@ -161,12 +180,64 @@ export function initPassport(app: Express) {
   });
 }
 
-// Keep existing isAuthenticated middleware
 export function isAuthenticated(
   req: Request,
   res: Response,
   next: NextFunction
-): void {
-  if (req.user) return next();
-  res.redirect("/");
+) {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "Not authorized" });
+
+  jwt.verify(
+    token,
+    process.env.JWT_SECRET!,
+    async (
+      err: jwt.VerifyErrors | null,
+      decoded: string | jwt.JwtPayload | undefined
+    ) => {
+      if (err) return res.status(403).json({ message: "Invalid token" });
+      if (!decoded) return res.status(403).json({ message: "Invalid token" });
+
+      req.user = decoded as Express.User;
+
+      const person = new PersonRepository();
+
+      const select = {
+        id: true,
+        email: true,
+        locationStreet: true,
+        maxPublications: true,
+        name: true,
+        openingHours: true,
+        role: true,
+        updatedAt: true,
+        accounts: true,
+        personMediaResources: true,
+      };
+
+      const user = await person.findOne(
+        { id: (decoded as { id: number }).id },
+        select
+      );
+
+      if (!user) return res.status(401).json({ message: "Not authorized" });
+
+      let isFacebookAccount = false;
+      let isGoogleAccount = false;
+
+      // User could have multiple accounts (e.g., Facebook and Google) associated with the same email
+      if (user.accounts.length > 0) {
+        const acc = user.accounts.find(
+          (account) => account.providerId === decoded?.providerId
+        );
+
+        isFacebookAccount = acc?.provider === "facebook";
+        isGoogleAccount = acc?.provider === "google";
+      }
+
+      req.user = { ...user, isFacebookAccount, isGoogleAccount };
+
+      next();
+    }
+  );
 }

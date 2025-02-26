@@ -12,11 +12,7 @@ export class LocationController {
     this.locationService = locationService;
   }
 
-  public getAllProvinces = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getAllProvinces = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const provinces = await this.locationService.getAllProvinces();
       res.status(200).json({
@@ -29,7 +25,7 @@ export class LocationController {
     }
   };
 
-  public getCitiesByProvince = async (
+  getCitiesByProvince = async (
     req: Request,
     res: Response,
     next: NextFunction
