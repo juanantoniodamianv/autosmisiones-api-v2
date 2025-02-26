@@ -22,7 +22,7 @@ export class VehicleDataController {
    * @desc    Get all vehicle categories
    * @route   GET /api/v1/categories
    */
-  public getAllCategories = async (
+  getAllCategories = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -43,11 +43,7 @@ export class VehicleDataController {
    * @desc    Get single category by ID
    * @route   GET /api/v1/categories/:categoryId
    */
-  public getCategoryById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getCategoryById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const category = await this.vehicleDataService.getCategoryById(
         req.params.categoryId
@@ -73,7 +69,7 @@ export class VehicleDataController {
    * @desc    Get makes by category ID (from query parameter)
    * @route   GET /api/v1/makes?categoryId=:id
    */
-  public getMakesByCategory = async (
+  getMakesByCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -105,11 +101,7 @@ export class VehicleDataController {
    * @desc    Get single make by ID
    * @route   GET /api/v1/makes/:makeId
    */
-  public getMakeById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getMakeById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const make = await this.vehicleDataService.getMakeById(req.params.makeId);
 
@@ -133,11 +125,7 @@ export class VehicleDataController {
    * @desc    Get models by make ID (from query parameter)
    * @route   GET /api/v1/models?makeId=:id
    */
-  public getModelsByMake = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getModelsByMake = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { makeId } = req.query;
 
@@ -165,11 +153,7 @@ export class VehicleDataController {
    * @desc    Get single model by ID
    * @route   GET /api/v1/models/:modelId
    */
-  public getModelById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getModelById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const model = await this.vehicleDataService.getModelById(
         req.params.modelId
@@ -195,7 +179,7 @@ export class VehicleDataController {
    * @desc    Get versions by model ID (from query parameter)
    * @route   GET /api/v1/versions?modelId=:id
    */
-  public getVersionsByModel = async (
+  getVersionsByModel = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -227,11 +211,7 @@ export class VehicleDataController {
    * @desc    Get single version by ID
    * @route   GET /api/v1/versions/:versionId
    */
-  public getVersionById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getVersionById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const version = await this.vehicleDataService.getVersionById(
         req.params.versionId

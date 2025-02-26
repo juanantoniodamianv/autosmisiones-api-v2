@@ -20,7 +20,7 @@ export class PersonController {
 
   // TODO:
   // paginate
-  public async getAllPeople(req: Request, res: Response): Promise<void> {
+  getAllPeople = async (req: Request, res: Response): Promise<void> => {
     try {
       const people = await this.personService.findAll();
       res.json(people);
@@ -31,9 +31,9 @@ export class PersonController {
         res.status(500).json({ error: "An unknown error occurred" });
       }
     }
-  }
+  };
 
-  public async getPersonById(req: Request, res: Response): Promise<void> {
+  getPersonById = async (req: Request, res: Response): Promise<void> => {
     try {
       const person = await this.personService.findById(parseInt(req.params.id));
       if (person) {
@@ -48,22 +48,9 @@ export class PersonController {
         res.status(500).json({ error: "An unknown error occurred" });
       }
     }
-  }
+  };
 
-  public async createPerson(req: Request, res: Response): Promise<void> {
-    try {
-      const person = await this.personService.create(req.body);
-      res.status(201).json(person);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(500).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "An unknown error occurred" });
-      }
-    }
-  }
-
-  public async updatePerson(req: Request, res: Response): Promise<void> {
+  updatePerson = async (req: Request, res: Response): Promise<void> => {
     try {
       const personId = parseInt(req.params.id);
       const person = await this.personService.findById(personId);
@@ -80,9 +67,9 @@ export class PersonController {
         res.status(500).json({ error: "An unknown error occurred" });
       }
     }
-  }
+  };
 
-  public async deletePerson(req: Request, res: Response): Promise<void> {
+  deletePerson = async (req: Request, res: Response): Promise<void> => {
     try {
       const personId = parseInt(req.params.id);
       const person = await this.personService.findById(personId);
@@ -99,14 +86,15 @@ export class PersonController {
         res.status(500).json({ error: "An unknown error occurred" });
       }
     }
-  }
+  };
 
-  public async signUp(req: Request, res: Response): Promise<void> {
+  signUp = async (req: Request, res: Response) => {
     try {
-      // Person exists?
-      const person = await this.personService.findAll({
+      const person = await this.personService.findOne({
         email: req.body.email,
       });
+
+      console.log({ person });
       if (person) {
         res.status(400).json({ error: "Person already exists" });
         return;
@@ -115,21 +103,22 @@ export class PersonController {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const newPerson = await this.personService.create({
-        ...req.body,
+        email: req.body.email,
         password: hashedPassword,
+        role: "USER",
       });
 
       res.status(201).json(newPerson);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message, stack: error.stack });
       } else {
         res.status(500).json({ error: "An unknown error occurred" });
       }
     }
-  }
+  };
 
-  public async signIn(req: Request, res: Response): Promise<void> {
+  signIn = async (req: Request, res: Response): Promise<void> => {
     try {
       const person = await this.personService.findOne({
         email: req.body.email,
@@ -159,5 +148,5 @@ export class PersonController {
         res.status(500).json({ error: "An unknown error occurred" });
       }
     }
-  }
+  };
 }

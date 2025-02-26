@@ -9,20 +9,21 @@ abstract class BaseRepository<T extends { id: number }> {
     this.model = model;
   }
 
-  async findAll(where?: {}): Promise<T[]> {
+  async findAll(where?: {}, select?: {}): Promise<T[]> {
     // @ts-expect-error - Dynamically access the Prisma model
-    return prisma[this.model].findMany({ where });
+    return prisma[this.model].findMany({ where, select });
   }
 
-  async findOne(where?: {}): Promise<T> {
+  async findOne(where?: {}, select?: {}): Promise<T> {
     // @ts-expect-error - Dynamically access the Prisma model
-    return prisma[this.model].findUnique({ where });
+    return prisma[this.model].findUnique({ where, select });
   }
 
-  async findById(id: number): Promise<T | null> {
+  async findById(id: number, select?: {}): Promise<T | null> {
     // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].findUnique({
       where: { id },
+      select,
     });
   }
 
