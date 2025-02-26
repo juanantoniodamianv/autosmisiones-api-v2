@@ -13,7 +13,7 @@ const publicationService = isTestEnvironment
 
 const publicationController = new PublicationController(publicationService);
 
-router.get("/publication", publicationController.getAllPublications);
+router.get("/", publicationController.getAllPublications);
 router.post("/publication", publicationController.createPublication);
 router.put("/publication/:id", publicationController.updatePublication);
 router.delete("/publication/:id", publicationController.deletePublication);

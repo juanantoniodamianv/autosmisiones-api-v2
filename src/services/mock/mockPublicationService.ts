@@ -109,11 +109,11 @@ export class MockPublicationService implements IPublicationService {
     }
   
     async delete(id: number): Promise<void> {
-      const personIndex = this.publications.findIndex((p) => p.id === id);
-      if (personIndex === -1) {
-        throw new Error("Person not found.");
+      const publicationIndex = this.publications.findIndex((p) => p.id === id);
+      if (publicationIndex === -1) {
+        throw new Error("Publication not found.");
       }
-      this.publications.splice(personIndex, 1);
+      this.publications.splice(publicationIndex, 1);
       return Promise.resolve();
     }
   
