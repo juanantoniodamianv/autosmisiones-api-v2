@@ -12,6 +12,8 @@ const router = express.Router();
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
 const JWT_SECRET = process.env.JWT_SECRET || "JWT_SECRET";
 
+type CustomUser = Express.User & { id: string; providerId: string };
+
 const isTestEnvironment = process.env.NODE_ENV === "test";
 const personService = isTestEnvironment
   ? new MockPersonService()
@@ -28,7 +30,7 @@ router.get(
     failureRedirect: `${FRONTEND_URL}/signin`,
   }),
   (req: Request, res: Response) => {
-    const user = req.user;
+    const user = req.user as CustomUser;
     const token = jwt.sign(
       { id: user?.id, providerId: user?.providerId },
       JWT_SECRET,
@@ -59,7 +61,7 @@ router.get(
     failureRedirect: `${FRONTEND_URL}/signin`,
   }),
   (req: Request, res: Response) => {
-    const user = req.user;
+    const user = req.user as CustomUser;
     const token = jwt.sign(
       { id: user?.id, providerId: user?.providerId },
       JWT_SECRET,
@@ -80,28 +82,31 @@ router.get(
 
 // Passport email/password login
 router.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
+  passport.authenticate(
+    "local",
+    (err: unknown, user: CustomUser, info: { message: string }) => {
+      if (err) return next(err);
 
-    if (!user) return res.status(401).json({ message: info.message });
+      if (!user) return res.status(401).json({ message: info.message });
 
-    // Generate JWT Token
-    const token = jwt.sign(
-      { id: user.id, providerId: null }, // No providerId since it's email/password login
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+      // Generate JWT Token
+      const token = jwt.sign(
+        { id: user.id, providerId: null }, // No providerId since it's email/password login
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 3600000,
-      path: "/",
-    });
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 3600000,
+        path: "/",
+      });
 
-    res.json({ message: "Login successful", token });
-  })(req, res, next);
+      res.json({ message: "Login successful", token });
+    }
+  )(req, res, next);
 });
 
 router.post("/register", personController.signUp);

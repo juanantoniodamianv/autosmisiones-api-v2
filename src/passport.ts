@@ -71,7 +71,7 @@ export function initPassport(app: Express) {
               openingHours: null,
               locationStreet: null,
               accounts: {
-                // @ts-ignore
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     provider: "google",
@@ -84,7 +84,7 @@ export function initPassport(app: Express) {
                 ],
               },
               personMediaResources: {
-                // @ts-ignore
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     url: profile._json.picture,
@@ -137,7 +137,7 @@ export function initPassport(app: Express) {
               openingHours: null,
               locationStreet: null,
               accounts: {
-                // @ts-ignore
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     provider: "facebook",
@@ -150,7 +150,7 @@ export function initPassport(app: Express) {
                 ],
               },
               personMediaResources: {
-                // @ts-ignore
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     url: profile._json.picture,
@@ -190,7 +190,10 @@ export function isAuthenticated(
   next: NextFunction
 ) {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: "Not authorized" });
+  if (!token) {
+    //return res.status(401).json({ message: "Not authorized" });
+    next("Not authorized");
+  }
 
   jwt.verify(
     token,
