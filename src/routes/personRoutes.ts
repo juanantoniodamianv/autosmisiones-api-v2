@@ -13,9 +13,52 @@ const personService = isTestEnvironment
 
 const personController = new PersonController(personService);
 
+/**
+ * @swagger
+ * /api/people:
+ *   get:
+ *     summary: Get all users
+ *     tags: [People]
+ *     responses:
+ *       200:
+ *         description: List of users
+ */
 router.get("/", personController.getAllPeople);
+
+/**
+ * @swagger
+ * /api/people/:id:
+ *   get:
+ *     summary: Get user by id
+ *     tags: [People]
+ *     responses:
+ *       200:
+ *         description: Get user by id
+ */
 router.get("/:id", personController.getPersonById);
+
+/**
+ * @swagger
+ * /api/people/:id:
+ *   put:
+ *     summary: Update user by id
+ *     tags: [People]
+ *     responses:
+ *       200:
+ *         description: Update user by id
+ */
 router.put("/:id", personController.updatePerson);
+
+/**
+ * @swagger
+ * /api/people/:id:
+ *   put:
+ *     summary: Delete user by id
+ *     tags: [People]
+ *     responses:
+ *       200:
+ *         description: Delete user by id
+ */
 router.delete("/:id", personController.deletePerson);
 
 export default router;
