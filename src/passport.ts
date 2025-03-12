@@ -71,6 +71,7 @@ export function initPassport(app: Express) {
               openingHours: null,
               locationStreet: null,
               accounts: {
+                // @ts-ignore
                 create: [
                   {
                     provider: "google",
@@ -83,6 +84,7 @@ export function initPassport(app: Express) {
                 ],
               },
               personMediaResources: {
+                // @ts-ignore
                 create: [
                   {
                     url: profile._json.picture,
@@ -135,6 +137,7 @@ export function initPassport(app: Express) {
               openingHours: null,
               locationStreet: null,
               accounts: {
+                // @ts-ignore
                 create: [
                   {
                     provider: "facebook",
@@ -147,6 +150,7 @@ export function initPassport(app: Express) {
                 ],
               },
               personMediaResources: {
+                // @ts-ignore
                 create: [
                   {
                     url: profile._json.picture,
@@ -228,7 +232,9 @@ export function isAuthenticated(
       // User could have multiple accounts (e.g., Facebook and Google) associated with the same email
       if (user.accounts.length > 0) {
         const acc = user.accounts.find(
-          (account) => account.providerId === decoded?.providerId
+          (account) =>
+            account.providerId ===
+            (decoded as { providerId: string }).providerId
         );
 
         isFacebookAccount = acc?.provider === "facebook";
