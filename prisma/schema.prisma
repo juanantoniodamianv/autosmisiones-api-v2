@@ -70,7 +70,6 @@ model Publication {
   vehicleVersion   VehicleVersion? @relation(fields: [vehicleVersionId], references: [id])
 
   publicationMediaResources PublicationMediaResource[]
-  vehicleCustomDataId       Int?
 }
 
 model Province {
