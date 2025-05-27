@@ -10,12 +10,12 @@ const isTestEnvironment = process.env.NODE_ENV === "test";
 const publicationService = isTestEnvironment
   ? new MockPublicationService()
   : new PublicationService();
-
+console.log(publicationService);
 const publicationController = new PublicationController(publicationService);
 
 router.get("/", publicationController.getAllPublications);
-router.post("/publication", publicationController.createPublication);
-router.put("/publication/:id", publicationController.updatePublication);
-router.delete("/publication/:id", publicationController.deletePublication);
+// router.post("/", publicationController.createPublication);
+// router.put("/:id", publicationController.updatePublication);
+// router.delete("/:id", publicationController.deletePublication);
 
 export default router;

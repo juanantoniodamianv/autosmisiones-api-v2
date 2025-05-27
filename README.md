@@ -18,3 +18,9 @@
 - [ ] Crear publicacion
 - [ ] Traer data de vehiculos
 - [ ] Traer data de provincia/ciudad
+
+## Prisma commands
+
+npx prisma migrate dev --name init --create-only
+npx prisma migrate dev
+
