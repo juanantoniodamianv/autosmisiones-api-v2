@@ -2,14 +2,15 @@ import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
+import swaggerOptions from "./swaggerConfig";
 import { apiRouter, authRoutes } from "./routes";
 import { initPassport } from "./passport";
+import { API_URL, FRONTEND_URL, JWT_SECRET, PORT } from "./env";
 
-// TODO: should we move these env to a file
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
-const JWT_SECRET = process.env.JWT_SECRET || "JWT_SECRET";
-const PORT = process.env.PORT || 3000;
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 const app = express();
 
@@ -40,6 +41,10 @@ app.use("/api", apiRouter);
 // Authentication routes
 app.use("/auth", authRoutes);
 
+// Swagger docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Swagger docs available at ${API_URL}/api-docs`);
 });

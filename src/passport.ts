@@ -71,6 +71,7 @@ export function initPassport(app: Express) {
               openingHours: null,
               locationStreet: null,
               accounts: {
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     provider: "google",
@@ -83,6 +84,7 @@ export function initPassport(app: Express) {
                 ],
               },
               personMediaResources: {
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     url: profile._json.picture,
@@ -135,6 +137,7 @@ export function initPassport(app: Express) {
               openingHours: null,
               locationStreet: null,
               accounts: {
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     provider: "facebook",
@@ -147,6 +150,7 @@ export function initPassport(app: Express) {
                 ],
               },
               personMediaResources: {
+                // @ts-expect-error not sure how to type this
                 create: [
                   {
                     url: profile._json.picture,
@@ -186,7 +190,10 @@ export function isAuthenticated(
   next: NextFunction
 ) {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: "Not authorized" });
+  if (!token) {
+    //return res.status(401).json({ message: "Not authorized" });
+    next("Not authorized");
+  }
 
   jwt.verify(
     token,
@@ -228,7 +235,9 @@ export function isAuthenticated(
       // User could have multiple accounts (e.g., Facebook and Google) associated with the same email
       if (user.accounts.length > 0) {
         const acc = user.accounts.find(
-          (account) => account.providerId === decoded?.providerId
+          (account) =>
+            account.providerId ===
+            (decoded as { providerId: string }).providerId
         );
 
         isFacebookAccount = acc?.provider === "facebook";

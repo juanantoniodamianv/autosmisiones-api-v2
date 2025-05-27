@@ -19,7 +19,37 @@ const locationService = isTestEnvironment
 
 const locationController = new LocationController(locationService);
 
+/**
+ * @swagger
+ * /api/locations/provinces:
+ *   get:
+ *     summary: Get all provinces
+ *     tags: [Locations]
+ *     responses:
+ *       200:
+ *         description: List of provinces
+ */
 router.get("/provinces", locationController.getAllProvinces);
+
+/**
+ * @swagger
+ * /api/locations/cities:
+ *   get:
+ *     summary: Get cities by province
+ *     tags: [Locations]
+ *     parameters:
+ *       - in: query
+ *         name: provinceId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The ID of the province to filter cities
+ *     responses:
+ *       200:
+ *         description: List of cities
+ *       400:
+ *         description: Invalid province ID
+ */
 router.get("/cities", (req: GetCityRequest, res, next) => {
   locationController.getCitiesByProvince(req, res, next);
 });
