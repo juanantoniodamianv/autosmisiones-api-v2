@@ -3,6 +3,7 @@ import express from "express";
 import { PersonController } from "../controllers/PersonController";
 import { MockPersonService } from "../services/mock/mockPersonService";
 import { PersonService } from "../services/personService";
+import { requireAuth } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ const personController = new PersonController(personService);
  *       200:
  *         description: List of users
  */
-router.get("/", personController.getAllPeople);
+router.get("/", requireAuth, personController.getAllPeople);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/", personController.getAllPeople);
  *       200:
  *         description: Get user by id
  */
-router.get("/:id", personController.getPersonById);
+router.get("/:id", requireAuth, personController.getPersonById);
 
 /**
  * @swagger
@@ -47,7 +48,7 @@ router.get("/:id", personController.getPersonById);
  *       200:
  *         description: Update user by id
  */
-router.put("/:id", personController.updatePerson);
+router.put("/:id", requireAuth, personController.updatePerson);
 
 /**
  * @swagger
@@ -59,6 +60,6 @@ router.put("/:id", personController.updatePerson);
  *       200:
  *         description: Delete user by id
  */
-router.delete("/:id", personController.deletePerson);
+router.delete("/:id", requireAuth, personController.deletePerson);
 
 export default router;

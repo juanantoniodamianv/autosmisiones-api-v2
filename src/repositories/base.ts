@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 abstract class BaseRepository<T extends { id: number }> {
   protected model: keyof PrismaClient;

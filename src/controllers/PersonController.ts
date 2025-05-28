@@ -2,6 +2,14 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+    }
+  }
+}
+
 export interface IPersonService {
   findAll(query?: any): Promise<any[]>;
   findById(id: number): Promise<any | null>;
@@ -9,6 +17,7 @@ export interface IPersonService {
   update(id: number, data: any): Promise<any | null>;
   delete(id: number): Promise<void>;
   findOne(query: any): Promise<any | null>;
+  findUnique(query: { where: { clerkId: string } }): Promise<any | null>;
 }
 
 export class PersonController {
@@ -35,7 +44,15 @@ export class PersonController {
 
   getPersonById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const person = await this.personService.findById(parseInt(req.params.id));
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ error: "User ID not found" });
+        return;
+      }
+
+      const person = await this.personService.findUnique({
+        where: { clerkId: userId }
+      });
       if (person) {
         res.json(person);
       } else {
@@ -88,13 +105,12 @@ export class PersonController {
     }
   };
 
-  signUp = async (req: Request, res: Response) => {
+  signUp = async (req: Request, res: Response): Promise<void> => {
     try {
       const person = await this.personService.findOne({
         email: req.body.email,
       });
 
-      console.log({ person });
       if (person) {
         res.status(400).json({ error: "Person already exists" });
         return;
@@ -123,7 +139,6 @@ export class PersonController {
       const person = await this.personService.findOne({
         email: req.body.email,
       });
-      // password may be null, in the scenario that we create a new one without active, Ex: invitations to register
       if (!person || !person.password) {
         res.status(404).json({ error: "Person not found" });
         return;
