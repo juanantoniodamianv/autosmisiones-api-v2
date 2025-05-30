@@ -4,7 +4,7 @@ import { VehicleMakeRepository } from "../repositories/VehicleMake";
 import { VehicleModelRepository } from "../repositories/VehicleModel";
 import { VehicleVersionRepository } from "../repositories/VehicleVersion";
 
-export class MockVehicleDataService implements IVehicleDataService {
+export class VehicleDataService implements IVehicleDataService {
   category = new VehicleCategoryRepository();
   make = new VehicleMakeRepository();
   model = new VehicleModelRepository();

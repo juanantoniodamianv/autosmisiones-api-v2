@@ -1,6 +1,7 @@
 import express, { Router, Request } from "express";
 import { VehicleDataController } from "../controllers/VehicleDataController";
 import { MockVehicleDataService } from "../services/mock/mockVehicleDataService";
+import { VehicleDataService } from "../services/vehicleDataService";
 
 interface GetCategoryRequest extends Request {
   params: {
@@ -37,7 +38,10 @@ interface GetVersionRequest extends Request {
 
 const router: Router = express.Router();
 
-const vehicleDataService = new MockVehicleDataService();
+const isTestEnvironment = process.env.NODE_ENV === "test";
+const vehicleDataService = isTestEnvironment
+  ? new MockVehicleDataService()
+  : new VehicleDataService();
 const vehicleDataController = new VehicleDataController(vehicleDataService);
 
 /**
