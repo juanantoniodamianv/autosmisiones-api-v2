@@ -17,7 +17,6 @@ export interface IPersonService {
   update(id: number, data: any): Promise<any | null>;
   delete(id: number): Promise<void>;
   findOne(query: any): Promise<any | null>;
-  findUnique(query: { where: { clerkId: string } }): Promise<any | null>;
 }
 
 export class PersonController {
@@ -29,6 +28,8 @@ export class PersonController {
 
   // TODO:
   // paginate
+  // filter
+  // sort
   getAllPeople = async (req: Request, res: Response): Promise<void> => {
     try {
       const people = await this.personService.findAll();
@@ -44,15 +45,14 @@ export class PersonController {
 
   getPersonById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.userId;
-      if (!userId) {
+      const { id } = req.params;
+
+      if (!id) {
         res.status(401).json({ error: "User ID not found" });
         return;
       }
 
-      const person = await this.personService.findUnique({
-        where: { clerkId: userId }
-      });
+      const person = await this.personService.findOne({ clerkId: id });
       if (person) {
         res.json(person);
       } else {

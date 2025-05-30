@@ -2,13 +2,13 @@ import { Router } from "express";
 
 import { vehicleDataRoutes } from "./vehicleDataRoutes";
 import { locationRoutes } from "./locationRoutes";
-import personRoutes from "./personRoutes";
+import { protectedRoutes } from "./protectedRoutes";
 import publicationRoutes from "./publicationRoutes";
 
 const apiRouter = Router();
 
 // Protected routes
-apiRouter.use('/protected', personRoutes);
+apiRouter.use('/protected', protectedRoutes);
 
 // Public routes
 apiRouter.get('/health', (req, res) => {

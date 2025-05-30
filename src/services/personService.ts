@@ -27,8 +27,4 @@ export class PersonService implements IPersonService {
   async delete(id: number): Promise<void> {
     await this.person.delete(id);
   }
-
-  async findUnique(query: { where: { clerkId: string } }): Promise<any | null> {
-    return await this.person.findUnique(query);
-  }
 }
