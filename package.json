@@ -23,6 +23,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.13.1",
     "sequelize": "^6.37.5",
+    "svix": "^1.66.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",

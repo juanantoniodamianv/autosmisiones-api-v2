@@ -28,7 +28,7 @@ router.get("/", requireAuth, personController.getAllPeople);
 
 /**
  * @swagger
- * /api/people/:id:
+ * /api/protected/people/:id:
  *   get:
  *     summary: Get user by id
  *     tags: [People]
@@ -52,7 +52,7 @@ router.put("/:id", requireAuth, personController.updatePerson);
 
 /**
  * @swagger
- * /api/people/:id:
+ * /api/protectedpeople/:id:
  *   put:
  *     summary: Delete user by id
  *     tags: [People]

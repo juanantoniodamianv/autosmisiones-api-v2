@@ -8,12 +8,15 @@ import { clerkAuth, syncClerkUser } from "./middlewares/clerkAuth";
 import swaggerOptions from "./swaggerConfig";
 import { apiRouter } from "./routes";
 import { API_URL, FRONTEND_URL, PORT } from "./env";
+import webhookRoutes from './routes/webhooks';
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 const app = express();
 
 app.use(express.json());
+
+app.use('/api/webhooks', webhookRoutes);
 
 // Allow requests from your frontend deployed URL with credentials
 app.use(
