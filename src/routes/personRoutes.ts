@@ -16,7 +16,7 @@ const personController = new PersonController(personService);
 
 /**
  * @swagger
- * /api/people:
+ * /api/protected/people:
  *   get:
  *     summary: Get all users
  *     tags: [People]
@@ -40,7 +40,7 @@ router.get("/:id", requireAuth, personController.getPersonById);
 
 /**
  * @swagger
- * /api/people/:id:
+ * /api/protected/people/:id:
  *   put:
  *     summary: Update user by id
  *     tags: [People]
