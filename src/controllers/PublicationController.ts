@@ -13,7 +13,6 @@ export class PublicationController {
   private publicationService: IPublicationService;
 
   constructor(publicationService: IPublicationService) {
-    console.log("llega" + JSON.stringify(publicationService));
     this.publicationService = publicationService;
   }
 

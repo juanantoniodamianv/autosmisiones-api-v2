@@ -10,7 +10,7 @@ const isTestEnvironment = process.env.NODE_ENV === "test";
 const publicationService = isTestEnvironment
   ? new MockPublicationService()
   : new PublicationService();
-console.log(publicationService);
+
 const publicationController = new PublicationController(publicationService);
 
 router.get("/", publicationController.getAllPublications);
