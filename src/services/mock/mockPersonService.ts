@@ -11,25 +11,25 @@ export class MockPersonService implements IPersonService {
         name: "John Doe",
         id: 1,
         email: "john.doe@example.com",
-        password: "password123",
         role: "USER",
         createdAt: new Date(),
         updatedAt: new Date(),
         maxPublications: 5,
         openingHours: "9:00 AM - 5:00 PM",
         locationStreet: "123 Main St",
+        clerkId: "1"
       },
       {
         name: "Jane Smith",
         id: 2,
         email: "jane.smith@example.com",
-        password: "password456",
         role: "ADMIN",
         createdAt: new Date(),
         updatedAt: new Date(),
         maxPublications: 10,
         openingHours: "10:00 AM - 6:00 PM",
         locationStreet: "456 Elm St",
+        clerkId: "2"
       },
     ];
   }
@@ -89,6 +89,11 @@ export class MockPersonService implements IPersonService {
         ([key, value]) => p[key as keyof Person] === value
       )
     );
+    return this.simulateDelay(person || null);
+  }
+
+  async findUnique(query: { where: { clerkId: string } }): Promise<Person | null> {
+    const person = this.people.find((p) => p.id === parseInt(query.where.clerkId));
     return this.simulateDelay(person || null);
   }
 }

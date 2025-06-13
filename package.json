@@ -7,6 +7,7 @@
     "postinstall": "npx prisma generate"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@prisma/client": "^6.2.1",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.10",
@@ -22,6 +23,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.13.1",
     "sequelize": "^6.37.5",
+    "svix": "^1.66.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
