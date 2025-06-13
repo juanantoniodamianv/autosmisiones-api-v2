@@ -4,17 +4,18 @@
     "test": "find ./src -name '*.test.ts' -exec node --test --require ts-node/register --test {} +",
     "testWin": "for /R src %f in (*.test.ts) do node --test --require ts-node/register %f",
     "lint": "tsc --noEmit && eslint .",
-    "postinstall": "npx prisma generate"
+    "postinstall": "npx prisma generate",
+    "prisma:seed": "ts-node-dev prisma/seed.ts"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
     "@prisma/client": "^6.2.1",
-    "@types/express": "^5.0.0",
+    "@types/express": "^4.17.21",
     "@types/node": "^22.10.10",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "express": "^4.21.2",
+    "express": "^4.18.2",
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
