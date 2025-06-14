@@ -44,7 +44,7 @@ describe("Person Service", () => {
       maxPublications: 7,
       openingHours: "8:00 AM - 4:00 PM",
       locationStreet: "789 Oak St",
-    } as Person;
+    } as unknown as Person;
 
     const createdPerson = await service.create(newPerson);
     assert.strictEqual(createdPerson.id, 3);

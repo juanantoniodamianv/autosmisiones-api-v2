@@ -1,8 +1,10 @@
 // routes/webhooks.ts
 import express from 'express';
 import { Webhook } from 'svix';
+import { clerkClient } from '@clerk/clerk-sdk-node'
 
 import { PersonService } from '../services/personService';
+import { Prisma } from '@prisma/client';
 
 const router = express.Router();
 
@@ -27,7 +29,8 @@ const verifyWebhook = async (req: express.Request, res: express.Response, next: 
       'svix-signature': headers['svix-signature'] as string,
     });
     next();
-  } catch (err) {
+  } catch (error) {
+    console.error('Webhook verification failed:', error);
     res.status(400).json({ error: 'Webhook verification failed' });
     return;
   }
@@ -35,10 +38,10 @@ const verifyWebhook = async (req: express.Request, res: express.Response, next: 
 
 // Webhook handler
 router.post('/clerk', express.raw({ type: 'application/json' }), verifyWebhook, async (req, res) => {
-  console.log('Webhook received');
-  console.log(req.body);
+  // console.log(req.body);
   
   const { type, data } = req.body;
+  console.log(`[${type}] Webhook received`);
 
   try {
     switch (type) {
@@ -48,9 +51,9 @@ router.post('/clerk', express.raw({ type: 'application/json' }), verifyWebhook, 
       case 'user.updated':
         await handleUserUpdated(data);
         break;
-    //   case 'user.deleted':
-    //     await handleUserDeleted(data);
-    //     break;
+      case 'user.deleted':
+        await handleUserDeleted(data);
+        break;
       default:
         console.log(`Unhandled webhook type: ${type}`);
     }
@@ -76,10 +79,21 @@ const handleUserCreated = async (userData: any) => {
         updatedAt: new Date(userData.updated_at),
       });
     
+      await clerkClient.users.updateUserMetadata(userData.id, {
+        publicMetadata: {
+          role: 'user',
+        },
+      })
+    
     console.log('User created in database:', user.id);
   } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
+    // If error Unique constraint failed on the fields then log the error
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      console.error('Error creating user:', error);
+    } else {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
 };
 
@@ -87,10 +101,17 @@ const handleUserCreated = async (userData: any) => {
 const handleUserUpdated = async (userData: any) => {
   try {
     const personService = new PersonService();
-    const user = await personService.update(userData.id,{
+    const user = await personService.findOne({ clerkId: userData.id });
+
+    if (!user) {
+      console.log('User not found in database:', userData.id, 'creating...');
+      await handleUserCreated(userData);
+      return;
+    }
+
+    await personService.update(user.id, {
         email: userData.email_addresses[0]?.email_address || '',
-        firstName: userData.first_name || '',
-        lastName: userData.last_name || '',
+        name: [userData.first_name, userData.last_name].join(' ') || '',
         updatedAt: new Date(userData.updated_at),
       });
     
@@ -101,16 +122,23 @@ const handleUserUpdated = async (userData: any) => {
 };
 
 // Handle user deletion
-// const handleUserDeleted = async (userData: any) => {
-//   try {
-//     await prisma.user.delete({
-//       where: { clerkId: userData.id },
-//     });
+const handleUserDeleted = async (userData: any) => {
+  try {
+    console.log('User deleted from clerk:', userData);
+    const personService = new PersonService();
+    const user = await personService.findOne({ clerkId: userData.id });
     
-//     console.log('User deleted from database:', userData.id);
-//   } catch (error) {
-//     console.error('Error deleting user:', error);
-//   }
-// };
+    if (user) {
+      await personService.delete(user.id)
+    } else {
+      console.log('User not found in database:', userData.id);
+    }
+
+    console.log('User deleted from database:', userData.id);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+};
 
 export default router;

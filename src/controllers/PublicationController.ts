@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
 export interface IPublicationService {
   findAll(query?: any): Promise<any[]>;
@@ -16,7 +16,7 @@ export class PublicationController {
     this.publicationService = publicationService;
   }
 
-  getAllPublications = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAllPublications = async (req: Request, res: Response): Promise<void> => {
     try {
         // const {
         //     userPublication,
