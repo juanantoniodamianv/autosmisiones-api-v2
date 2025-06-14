@@ -43,9 +43,17 @@ export class PhoneService implements IPhoneService {
   }
 
   async updatePhone(userId: string, phoneId: number, data: { phone?: string; type?: string; verified?: boolean }) {
+    const user = await this.person.findOne({
+      clerkId: userId
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const existingPhone = await this.phone.findOne({
       id: phoneId,
-      personId: parseInt(userId)
+      personId: user.id
     });
 
     if (!existingPhone) {
@@ -56,9 +64,17 @@ export class PhoneService implements IPhoneService {
   }
 
   async deletePhone(userId: string, phoneId: number): Promise<void> {
+    const user = await this.person.findOne({
+      clerkId: userId
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const existingPhone = await this.phone.findOne({
       id: phoneId, 
-      personId: parseInt(userId)
+      personId: user.id
     });
 
     if (!existingPhone) {
