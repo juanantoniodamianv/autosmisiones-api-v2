@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 
 class PersonRepository extends BaseRepository<
   Prisma.PersonGetPayload<{
-    include: { accounts: true; personMediaResources: true };
+    include: { personMediaResources: true };
   }>
 > {
   constructor() {
