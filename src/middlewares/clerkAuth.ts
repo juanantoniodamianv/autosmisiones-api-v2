@@ -12,8 +12,8 @@ export const clerkAuth = (req: Request, res: Response, next: NextFunction) => {
 
 export const syncClerkUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.auth;
-    
+    const { userId } = req.auth as { userId: string };
+
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
