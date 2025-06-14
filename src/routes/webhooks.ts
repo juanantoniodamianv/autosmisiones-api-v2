@@ -82,6 +82,7 @@ const handleUserCreated = async (userData: any) => {
       await clerkClient.users.updateUserMetadata(userData.id, {
         publicMetadata: {
           role: 'user',
+          maxPublications: 3,
         },
       })
     
