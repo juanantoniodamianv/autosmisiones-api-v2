@@ -29,6 +29,7 @@ export const requireAuth = async (
     
     next();
   } catch (error) {
+    console.error('Authentication error:', error);
     res.status(401).json({ error: 'Invalid token' });
   }
 };

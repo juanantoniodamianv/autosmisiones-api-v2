@@ -1,6 +1,6 @@
 import { describe, before, it } from "node:test";
 import assert from "assert";
-import { Publication, VehicleCategory, VehicleMake, VehicleModel, VehicleVersion, Person, Status, City} from "@prisma/client";
+import { Publication } from "@prisma/client";
 
 import { MockPublicationService } from "../services/mock/mockPublicationService";
 

@@ -29,7 +29,8 @@ const verifyWebhook = async (req: express.Request, res: express.Response, next: 
       'svix-signature': headers['svix-signature'] as string,
     });
     next();
-  } catch (err) {
+  } catch (error) {
+    console.error('Webhook verification failed:', error);
     res.status(400).json({ error: 'Webhook verification failed' });
     return;
   }

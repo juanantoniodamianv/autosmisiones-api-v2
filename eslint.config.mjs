@@ -14,6 +14,7 @@ export default [
     rules: {
       "@typescript-eslint/no-empty-object-type": "off", // https://typescript-eslint.io/rules/no-empty-object-type/
       "@typescript-eslint/no-explicit-any": "off", // Disable "any" warnings
+      "@typescript-eslint/no-namespace": "off", // Allow namespace declarations
     },
   },
 ];

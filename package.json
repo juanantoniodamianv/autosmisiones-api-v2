@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "test": "find ./src -name '*.test.ts' -exec node --test --require ts-node/register --test {} +",
