@@ -20,7 +20,7 @@ export class VehicleDataService implements IVehicleDataService {
   }
 
   async getMakesByCategory(categoryId: string): Promise<any[]> {
-    return await this.make.findAll({ categoryId: categoryId });
+    return await this.make.findAll({ vehicleCategoryId: parseInt(categoryId) });
   }
 
   async getMakeById(id: string): Promise<any> {
@@ -28,7 +28,7 @@ export class VehicleDataService implements IVehicleDataService {
   }
 
   async getModelsByMake(makeId: string): Promise<any[]> {
-    return await this.model.findAll({ makeId: makeId });
+    return await this.model.findAll({ vehicleMakeId: parseInt(makeId) });
   }
 
   async getModelById(id: string): Promise<any> {
@@ -36,7 +36,7 @@ export class VehicleDataService implements IVehicleDataService {
   }
 
   async getVersionsByModel(modelId: string): Promise<any[]> {
-    return await this.version.findAll({ modelId: modelId });
+    return await this.version.findAll({ vehicleModelId: parseInt(modelId) });
   }
 
   async getVersionById(id: string): Promise<any> {
