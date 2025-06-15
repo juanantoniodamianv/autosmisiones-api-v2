@@ -19,6 +19,7 @@ export class PhoneController {
       const phones = await this.phoneService.getAllPhones(userId);
       res.json(phones);
     } catch (error) {
+      console.log("Error fetching phones", error);
       res.status(500).json({ error: "Error fetching phones" });
     }
   };

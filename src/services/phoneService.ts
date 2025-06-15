@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { IPhoneService } from "./mock/mockPhoneService";
 import { PhoneRepository } from "../repositories/Phone";
 import { PersonRepository } from "../repositories/Person";
@@ -29,7 +31,7 @@ export class PhoneService implements IPhoneService {
       throw new Error("User not found");
     }
 
-    return await this.phone.create({
+    const createData: Prisma.PhoneCreateInput = {
       phone: data.phone,
       type: data.type || "wp",
       verified: false,
@@ -39,7 +41,9 @@ export class PhoneService implements IPhoneService {
           id: user.id
         }
       }
-    });
+    };
+
+    return await this.phone.create(createData);
   }
 
   async updatePhone(userId: string, phoneId: number, data: { phone?: string; type?: string; verified?: boolean }) {

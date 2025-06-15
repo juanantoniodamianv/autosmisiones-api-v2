@@ -27,7 +27,7 @@ abstract class BaseRepository<T extends { id: number }> {
     });
   }
 
-  async create(data: Omit<T, "id">): Promise<T> {
+  async create(data: any): Promise<T> {
     // @ts-expect-error - Dynamically access the Prisma model
     return prisma[this.model].create({
       data,

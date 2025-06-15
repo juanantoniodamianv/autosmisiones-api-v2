@@ -108,8 +108,8 @@ model Person {
   maxPublications Int      @default(3)
   openingHours    String?
   locationStreet  String?
-  clerkId         String  @unique
-  
+  clerkId         String   @unique
+
   phones               Phone[]
   personMediaResources PersonMediaResource[]
   publications         Publication[]
