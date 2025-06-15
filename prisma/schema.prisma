@@ -108,26 +108,11 @@ model Person {
   maxPublications Int      @default(3)
   openingHours    String?
   locationStreet  String?
-  clerkId         String  @unique
+  clerkId         String   @unique
 
-  accounts             Account[]
   phones               Phone[]
   personMediaResources PersonMediaResource[]
   publications         Publication[]
-}
-
-model Account {
-  id           Int      @id @default(autoincrement())
-  userId       Int
-  user         Person   @relation(fields: [userId], references: [id])
-  provider     String // e.g., "email", "google", "facebook"
-  providerId   String? // Unique ID from the provider (e.g., Google ID, Facebook ID)
-  accessToken  String? // OAuth access token
-  refreshToken String? // OAuth refresh token
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@unique([provider, providerId]) // Ensure unique combination of provider and providerId
 }
 
 model City {
