@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import { Publication } from "@prisma/client";
 
 export interface IPublicationService {
-  findAll(query?: any): Promise<any[]>;
+  findAll(query?: any): Promise<Publication[]>;
   findById(id: number): Promise<any | null>;
-  create(data: any): Promise<any>;
+  create(data: Partial<Publication>): Promise<Publication>;
   update(id: number, data: any): Promise<any | null>;
-  delete(id: number): Promise<void>;
-  findOne(query: any): Promise<any | null>;
+  delete(id:number): Promise<void>;
+  //listPublications(filters: any): Promise<Publication[]>;
 }
 
 export class PublicationController {
@@ -16,207 +17,227 @@ export class PublicationController {
     this.publicationService = publicationService;
   }
 
-  getAllPublications = async (req: Request, res: Response): Promise<void> => {
+  /**
+   * @desc    Get all publication
+   * @route   GET /api/v1/publication
+   */
+ /* public getAllPublications = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-        // const {
-        //     userPublication,
-        //     allStatusPublications,
-            // order,
-        //     priceMin = 0,
-        //     priceMax = 9999999999,
-        //     yearMin = 0,
-        //     yearMax = 9999,
-        //     kmMin = 0,
-        //     kmMax = 999999,
-        //     category,
-        //     make,
-        //     model,
-        //     condition,
-        //     canceledStatus,
-        //     title,
-            // limit = 20,
-            // skip = 0,
-        //     allStatus = false,
-        //     withPriceOnly = false,
-        //     dolarValue = 1,
-        //     marketDiscount,
-          // } = req.query;
+      const publications = await this.publicationService.getAllPublications();
+      res.status(200).json({
+        success: true,
+        count: publications.length,
+        data: publications,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 
-        // // Convertir parámetros que deberían ser números
-        // const parsedLimit = parseInt(limit as string, 10) || 20;
-        // const parsedSkip = parseInt(skip as string, 10) || 0;
-        // const parsedDolarValue = parseFloat(dolarValue as string) || 1;
-        // const parsedPriceMin = Math.floor(parseFloat(priceMin as string) || 0);
-        // const parsedPriceMax = Math.floor(parseFloat(priceMax as string) || 9999999999);
-        // const parsedPriceMinUSD = Math.floor(parsedPriceMin / parsedDolarValue);
-        // const parsedPriceMaxUSD = Math.floor(parsedPriceMax / parsedDolarValue);
+  /**
+   * @desc    Get single publication by ID
+   * @route   GET /api/v1/publication/:publicationId
+   */
+  public getPublicationById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const publication = await this.publicationService.findById(
+        parseInt(req.params.publicationId)
+      )
 
-        // const filters: any = {
-        //     AND: [
-        //       {
-        //         OR: [
-        //           {
-        //             AND: [{ currencyType: "ARS$" }, { price: { gte: parsedPriceMin, lte: parsedPriceMax } }],
-        //           },
-        //           {
-        //             AND: [{ currencyType: "US$" }, { price: { gte: parsedPriceMinUSD, lte: parsedPriceMaxUSD } }],
-        //           },
-        //         ],
-        //       },
-        //       { km: { gte: parseInt(kmMin as string) || 0, lte: parseInt(kmMax as string) || 999999 } },
-        //       { year: { gte: parseInt(yearMin as string) || 0, lte: parseInt(yearMax as string) || 9999 } },
-        //     ],
-        //   };
-
-        //   if (userPublication && !allStatusPublications) {
-        //     filters.AND.push({ personId: parseInt(userPublication as string) });
-        //   }
-    
-        //   if (userPublication && allStatusPublications) {
-        //     filters.AND.push({ personId: { not: parseInt(userPublication as string) } });
-        //   }
-    
-        //   if (title) {
-        //     filters.AND.push({
-        //       OR: [
-        //         { make: { name: { contains: title as string, mode: "insensitive" } } },
-        //         { title: { contains: title as string, mode: "insensitive" } },
-        //         { custom: { make: { contains: title as string, mode: "insensitive" } } },
-        //       ],
-        //     });
-        //   }
-    
-        //   if (condition) {
-        //     filters.AND.push({ condition: { contains: condition as string, mode: "insensitive" } });
-        //   }
-    
-        //   if (marketDiscount) {
-        //     filters.AND.push({ marketDiscount: parseInt(marketDiscount as string) });
-        //   }
-    
-        //   if (category) {
-        //     filters.AND.push({ vehicleCategoryId: parseInt(category as string) });
-        //   }
-    
-        //   if (make) {
-        //     filters.AND.push({ makeId: parseInt(make as string) });
-        //   }
-    
-        //   if (model) {
-        //     filters.AND.push({ modelId: parseInt(model as string) });
-        //   }
-    
-        //   if (!allStatus && !canceledStatus) {
-        //     filters.AND.push({ statusid: 1 });
-        //   } else if (canceledStatus) {
-        //     filters.AND.push({ statusid: 3 });
-        //   }
-    
-        //   if (withPriceOnly) {
-        //     filters.AND.push({ price: { not: 0 } });
-          // }
-    
-
-          const publications = await this.publicationService.findAll({
-              // where: filters,
-            include: {
-              // make: true,
-              // model: true,
-              // version: true,
-              // custom: true,
-              mediaResources: {
-                take: 1, // Obtener solo la primera imagen
-              },
-              // favorite: userPublication
-              //   ? {
-              //       where: { personId: parseInt(userPublication as string) },
-              //       select: { id: true },
-              //     }
-              //   : false,
-            },
-          //  orderBy: order ? { [order as string]: "asc" } : undefined,
-          //  take: parsedLimit,
-           // skip: parsedSkip,
-          });
-    
-          res.json(publications);
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            console.error("Error fetching publications:", error);
-            res.status(500).json({ error: error.message });
-          } else {
-            res.status(500).json({ error: "An unknown error occurred" });
-          }
-        }
+      if (!publication) {
+        return res.status(404).json({
+          success: false,
+          message: "Publication not found",
+        });
       }
 
-  // public async getPublicationById(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const publication = await this.publicationService.findById(parseInt(req.params.id));
-  //     if (publication) {
-  //       res.json(publication);
-  //     } else {
-  //       res.status(404).json({ error: "Publication not found" });
-  //     }
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unknown error occurred" });
-  //     }
-  //   }
-  // }
+      res.status(200).json({
+        success: true,
+        data: publication,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 
-  // public async createPublication(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const publication = await this.publicationService.create(req.body);
-  //     res.status(201).json(publication);
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unknown error occurred" });
-  //     }
-  //   }
-  // }
+/**
+   * @desc    Create a new publication
+   * @route   POST /api/v1/publication
+   */
+public createPublication = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const publicationData: Partial<Publication> = req.body;
+    const newPublication = await this.publicationService.create(publicationData);
+    res.status(201).json({
+      success: true,
+      data: newPublication,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-  // public async updatePublication(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const publicationId = parseInt(req.params.id);
-  //     const publication = await this.publicationService.findById(publicationId);
-  //     if (publication) {
-  //       await this.publicationService.update(publicationId, req.body);
-  //       res.json(publication);
-  //     } else {
-  //       res.status(404).json({ error: "Publication not found" });
-  //     }
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unknown error occurred" });
-  //     }
-  //   }
-  // }
+/**
+ * @desc    List publications with filters
+ * @route   GET /api/v1/publication/list
+ */
+public getAllPublications = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      userPublication,
+      allStatusPublications,
+      order,
+      priceMin = 0,
+      priceMax = 9999999999,
+      yearMin = 0,
+      yearMax = 9999,
+      kmMin = 0,
+      kmMax = 9999999999,
+      category,
+      make,
+      model,
+      condition,
+      canceledStatus,
+      title,
+      limit = 20,
+      skip = 0,
+      allStatus = false,
+      withPriceOnly = false,
+      dolarValue = 1,
+      marketDiscount,
+    } = req.query;
 
-  // public async deletePublication(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const publicationId = parseInt(req.params.id);
-  //     const publication = await this.publicationService.findById(publicationId);
-  //     if (publication) {
-  //       await this.publicationService.delete(publicationId);
-  //       res.status(204).send();
-  //     } else {
-  //       res.status(404).json({ error: "Publication not found" });
-  //     }
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unknown error occurred" });
-  //     }
-  //   }
-  // }
+    const filters: any = {};
 
-  
+    if (userPublication && !allStatusPublications) {
+      filters.personId = Number(userPublication);
+    }
+
+    if (userPublication && allStatusPublications) {
+      filters.personId = { not: Number(userPublication) };
+    }
+
+    if (title) {
+      filters.OR = [
+        { make: { name: { contains: title as string, mode: "insensitive" } } },
+        { title: { contains: title as string, mode: "insensitive" } },
+        { customMake: { contains: title as string, mode: "insensitive" } },
+      ];
+    }
+
+    if (condition) {
+      filters.condition = { contains: condition as string, mode: "insensitive" };
+    }
+
+    if (marketDiscount) {
+      filters.marketDiscount = Number(marketDiscount);
+    }
+
+    if (category) {
+      filters.vehicleCategoryId = Number(category);
+    }
+
+    if (make) {
+      filters.makeId = Number(make);
+    }
+
+    if (model) {
+      filters.modelId = Number(model);
+    }
+
+    if (!allStatus && !canceledStatus) {
+      filters.statusId = 1;
+    } else if (canceledStatus) {
+      filters.statusId = 3;
+    }
+
+    if (withPriceOnly) {
+      filters.price = { not: 0 };
+    }
+
+    filters.price = {
+      OR: [
+        { currencyType: "ARS$", price: { gte: Number(priceMin), lte: Number(priceMax) } },
+        { currencyType: "US$", price: { gte: Math.floor(Number(priceMin) / Number(dolarValue)), lte: Math.floor(Number(priceMax) / Number(dolarValue)) } },
+      ],
+    };
+
+    filters.km = { gte: Number(kmMin), lte: Number(kmMax) };
+    filters.year = { gte: Number(yearMin), lte: Number(yearMax) };
+
+    const publications = await this.publicationService.findAll({
+      where: filters,
+      take: Number(limit),
+      skip: Number(skip),
+      orderBy: order ? { [order as string]: "asc" } : undefined,
+      include: {
+        make: true,
+        model: true,
+        version: true,
+        mediaResources: { take: 1 },
+      },
+    });
+
+    res.json({ count: publications.length, data: publications });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+public async updatePublication(req: Request, res: Response): Promise<void> {
+  try {
+    const publicationId = parseInt(req.params.id);
+    const publication = await this.publicationService.findById(publicationId);
+    if (publication) {
+      await this.publicationService.update(publicationId, req.body);
+      res.json(publication);
+    } else {
+      res.status(404).json({ error: "Publication not found" });
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred" });
+    }
+  }
+}
+
+public async deletePublication(req: Request, res: Response): Promise<void> {
+  try {
+    const publicationId = parseInt(req.params.id);
+    const publication = await this.publicationService.findById(publicationId);
+    if (publication) {
+      await this.publicationService.delete(publicationId);
+      res.status(204).send();
+    } else {
+      res.status(404).json({ error: "Publication not found" });
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred" });
+    }
+  }
+}
+
+
 }

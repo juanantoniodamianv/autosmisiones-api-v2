@@ -13,9 +13,22 @@ const publicationService = isTestEnvironment
 
 const publicationController = new PublicationController(publicationService);
 
+/**
+ * @swagger
+ * /api/publications:
+ *   get:
+ *     summary: Get all publications
+ *     tags: [Publications]
+ *     responses:
+ *       200:
+ *         description: List of publications
+ */
 router.get("/", publicationController.getAllPublications);
-// router.post("/", publicationController.createPublication);
-// router.put("/:id", publicationController.updatePublication);
-// router.delete("/:id", publicationController.deletePublication);
+
+//router.get("/:publicationId", publicationController.getPublicationById);
+router.post("/", publicationController.createPublication);
+router.put("/:id", publicationController.updatePublication);
+router.delete("/:id", publicationController.deletePublication);
+
 
 export default router;
