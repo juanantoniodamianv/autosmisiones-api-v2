@@ -137,6 +137,7 @@ model VehicleCategory {
   id           Int           @id @default(autoincrement())
   name         String
   publications Publication[]
+  makes        VehicleMake[]
 }
 
 model VehicleModel {
@@ -152,7 +153,9 @@ model VehicleModel {
 model VehicleMake {
   id            Int            @id @default(autoincrement())
   name          String         @unique
-  vehicleModels VehicleModel[]
+  vehicleCategoryId Int
+  vehicleCategory VehicleCategory @relation(fields: [vehicleCategoryId], references: [id])
 
-  publications Publication[]
+  vehicleModels VehicleModel[]
+  publications  Publication[]
 }
