@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
+import clerkClient, { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -25,7 +25,7 @@ export const syncClerkUser = async (req: Request, res: Response, next: NextFunct
 
     if (!person) {
       // Create new person if doesn't exist
-      const clerkUser = await req.clerk.users.getUser(userId);
+      const clerkUser = await clerkClient.users.getUser(userId);
       
       person = await prisma.person.create({
         data: {
