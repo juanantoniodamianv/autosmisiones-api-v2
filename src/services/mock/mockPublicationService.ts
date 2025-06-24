@@ -1,9 +1,86 @@
-import { Publication } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 import { IPublicationService } from "../../controllers/PublicationController";
 
+type PublicationWithRelations = {
+  id: number;
+  title: string;
+  description: string | null;
+  price: number | null;
+  previousPrice: number | null;
+  currencyType: string;
+  condition: string;
+  year: number | null;
+  km: number | null;
+  color: string | null;
+  neighborhood: string | null;
+  transmission: string | null;
+  engine: string | null;
+  fuelType: string | null;
+  doors: string | null;
+  uniqueOwner: boolean;
+  slugUrl: string;
+  swap: boolean;
+  ownerPhone: string | null;
+  marketDiscount: boolean;
+  personId: number;
+  cityId: number;
+  statusId: number;
+  vehicleCategoryId: number | null;
+  vehicleModelId: number | null;
+  vehicleMakeId: number | null;
+  vehicleVersionId: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+  person: {
+    id: number;
+    name: string | null;
+    email: string | null;
+    role: Role;
+    createdAt: Date;
+    updatedAt: Date;
+    maxPublications: number;
+    openingHours: string | null;
+    locationStreet: string | null;
+    clerkId: string;
+  };
+  city: {
+    id: number;
+    name: string;
+    provinceId: number;
+  };
+  status: {
+    id: number;
+    name: string;
+  };
+  vehicleCategory: {
+    id: number;
+    name: string;
+  } | null;
+  vehicleModel: {
+    id: number;
+    name: string;
+    vehicleMakeId: number;
+  } | null;
+  vehicleMake: {
+    id: number;
+    name: string;
+    vehicleCategoryId: number;
+  } | null;
+  vehicleVersion: {
+    id: number;
+    name: string;
+    vehicleModelId: number;
+  } | null;
+  publicationMediaResources: Array<{
+    id: number;
+    url: string;
+    publicationId: number;
+  }>;
+};
+
 export class MockPublicationService implements IPublicationService {
-  private publications: Publication[];
+  private publications: PublicationWithRelations[];
 
   constructor() {
     this.publications = [
@@ -34,7 +111,50 @@ export class MockPublicationService implements IPublicationService {
       vehicleCategoryId: 1,
       vehicleModelId: 2,
       vehicleMakeId: 1,
-      vehicleVersionId: 3
+      vehicleVersionId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      person: {
+        id: 1,
+        name: "Juan Pérez",
+        email: "juan@example.com",
+        role: Role.USER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        maxPublications: 3,
+        openingHours: null,
+        locationStreet: null,
+        clerkId: "clerk_123"
+      },
+      city: {
+        id: 1,
+        name: "Buenos Aires",
+        provinceId: 1
+      },
+      status: {
+        id: 1,
+        name: "Active"
+      },
+      vehicleCategory: {
+        id: 1,
+        name: "Sedan"
+      },
+      vehicleModel: {
+        id: 2,
+        name: "Corolla",
+        vehicleMakeId: 1
+      },
+      vehicleMake: {
+        id: 1,
+        name: "Toyota",
+        vehicleCategoryId: 1
+      },
+      vehicleVersion: {
+        id: 3,
+        name: "XEi",
+        vehicleModelId: 2
+      },
+      publicationMediaResources: []
     },
     {
       id: 2,
@@ -63,7 +183,50 @@ export class MockPublicationService implements IPublicationService {
       vehicleCategoryId: 2,
       vehicleModelId: 4,
       vehicleMakeId: 2,
-      vehicleVersionId: 5
+      vehicleVersionId: 5,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      person: {
+        id: 2,
+        name: "María García",
+        email: "maria@example.com",
+        role: Role.USER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        maxPublications: 3,
+        openingHours: null,
+        locationStreet: null,
+        clerkId: "clerk_456"
+      },
+      city: {
+        id: 2,
+        name: "Córdoba",
+        provinceId: 2
+      },
+      status: {
+        id: 1,
+        name: "Active"
+      },
+      vehicleCategory: {
+        id: 2,
+        name: "Pickup"
+      },
+      vehicleModel: {
+        id: 4,
+        name: "Ranger",
+        vehicleMakeId: 2
+      },
+      vehicleMake: {
+        id: 2,
+        name: "Ford",
+        vehicleCategoryId: 2
+      },
+      vehicleVersion: {
+        id: 5,
+        name: "Wildtrak",
+        vehicleModelId: 4
+      },
+      publicationMediaResources: []
     },
   ];
 }
@@ -72,32 +235,73 @@ export class MockPublicationService implements IPublicationService {
     return new Promise((resolve) => setTimeout(() => resolve(data), 50));
   }
 
-  async findAll(where?: Partial<Publication>): Promise<Publication[]> {
+  async findAll(where?: any): Promise<PublicationWithRelations[]> {
       const filteredPublication = this.publications.filter((publication) => {
         return Object.entries(where || {}).every(
-          ([key, value]) => publication[key as keyof Publication] === value
+          ([key, value]) => publication[key as keyof PublicationWithRelations] === value
         );
       });
       return this.simulateDelay(filteredPublication);
     }
   
-    async findById(id: number): Promise<Publication | null> {
+    async findById(id: number): Promise<PublicationWithRelations | null> {
       const publication = this.publications.find((p) => p.id === id);
       return this.simulateDelay(publication || null);
     }
   
-    async create(data: Publication): Promise<Publication> {
-      const publication= {
+    async create(data: any): Promise<PublicationWithRelations> {
+      const publication: PublicationWithRelations = {
         ...data,
         id: this.publications.length + 1,
         createdAt: new Date(),
         updatedAt: new Date(),
+        person: {
+          id: data.personId,
+          name: "Mock Person",
+          email: "mock@example.com",
+          role: Role.USER,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          maxPublications: 3,
+          openingHours: null,
+          locationStreet: null,
+          clerkId: "clerk_mock"
+        },
+        city: {
+          id: data.cityId,
+          name: "Mock City",
+          provinceId: 1
+        },
+        status: {
+          id: data.statusId,
+          name: "Active"
+        },
+        vehicleCategory: data.vehicleCategoryId ? {
+          id: data.vehicleCategoryId,
+          name: "Mock Category"
+        } : null,
+        vehicleModel: data.vehicleModelId ? {
+          id: data.vehicleModelId,
+          name: "Mock Model",
+          vehicleMakeId: data.vehicleMakeId || 1
+        } : null,
+        vehicleMake: data.vehicleMakeId ? {
+          id: data.vehicleMakeId,
+          name: "Mock Make",
+          vehicleCategoryId: data.vehicleCategoryId || 1
+        } : null,
+        vehicleVersion: data.vehicleVersionId ? {
+          id: data.vehicleVersionId,
+          name: "Mock Version",
+          vehicleModelId: data.vehicleModelId || 1
+        } : null,
+        publicationMediaResources: []
       };
       this.publications.push(publication);
       return this.simulateDelay(publication);
     }
   
-    async update(id: number, data: Partial<Publication>): Promise<Publication | null> {
+    async update(id: number, data: any): Promise<PublicationWithRelations | null> {
       const publicationIndex = this.publications.findIndex((p) => p.id === id);
       if (publicationIndex === -1) {
         return this.simulateDelay(null);
@@ -117,12 +321,12 @@ export class MockPublicationService implements IPublicationService {
       return Promise.resolve();
     }
   
-    async findOne(query: Partial<Publication>): Promise<Publication | null> {
-      const person = this.publications.find((p) =>
+    async findOne(query: any): Promise<PublicationWithRelations | null> {
+      const publication = this.publications.find((p) =>
         Object.entries(query).every(
-          ([key, value]) => p[key as keyof Publication] === value
+          ([key, value]) => p[key as keyof PublicationWithRelations] === value
         )
       );
-      return this.simulateDelay(person || null);
+      return this.simulateDelay(publication || null);
     }
 }

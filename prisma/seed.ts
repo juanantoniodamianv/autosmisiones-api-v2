@@ -139,6 +139,55 @@ async function main() {
     }),
   ]);
 
+  // Create Provinces
+  const provinces = await Promise.all([
+    prisma.province.create({
+      data: {
+        name: 'Buenos Aires',
+      },
+    }),
+  ]);
+
+  // Create Cities
+  const cities = await Promise.all([
+    prisma.city.create({
+      data: {
+        name: 'Buenos Aires',
+        provinceId: provinces[0].id,
+      },
+    }),
+  ]);
+
+  // Create Statuses
+  const statuses = await Promise.all([
+    prisma.status.create({
+      data: {
+        name: 'Active',
+      },
+    }),
+    prisma.status.create({
+      data: {
+        name: 'Inactive',
+      },
+    }),
+    
+    prisma.status.create({
+      data: {
+        name: 'Sold',
+      },
+    }),
+
+    prisma.status.create({
+      data: {
+        name: 'Pending',
+      },
+    }),
+  ]);
+
+  await Promise.all([
+    provinces, cities, statuses
+  ]);
+
   console.log('Seed data created successfully');
 }
 

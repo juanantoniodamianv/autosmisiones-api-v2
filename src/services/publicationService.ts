@@ -1,26 +1,40 @@
 import { IPublicationService } from "../controllers/PublicationController";
 import { PublicationRepository } from "../repositories/Publication";
+import { Prisma } from "@prisma/client";
+
+type PublicationWithRelations = Prisma.PublicationGetPayload<{
+  include: {
+    person: true;
+    city: true;
+    status: true;
+    vehicleCategory: true;
+    vehicleModel: true;
+    vehicleMake: true;
+    vehicleVersion: true;
+    publicationMediaResources: true;
+  };
+}>;
 
 export class PublicationService implements IPublicationService {
   publication = new PublicationRepository();
 
-  async findAll(query?: any): Promise<any[]> {
+  async findAll(query?: any): Promise<PublicationWithRelations[]> {
     return await this.publication.findAll(query);
   }
 
-  async findById(id: number): Promise<any | null> {
+  async findById(id: number): Promise<PublicationWithRelations | null> {
     return await this.publication.findById(id);
   }
 
-  async findOne(query?: any): Promise<any | null> {
+  async findOne(query?: any): Promise<PublicationWithRelations | null> {
     return await this.publication.findOne(query);
   }
 
-  async create(data: any): Promise<any> {
+  async create(data: any): Promise<PublicationWithRelations> {
     return await this.publication.create(data);
   }
 
-  async update(id: number, data: any): Promise<any | null> {
+  async update(id: number, data: any): Promise<PublicationWithRelations | null> {
     return await this.publication.update(id, data);
   }
 
