@@ -1,12 +1,26 @@
 import { Request, Response } from "express";
+import { Prisma } from "@prisma/client";
+
+export type PublicationWithRelations = Prisma.PublicationGetPayload<{
+  include: {
+    person: true;
+    city: true;
+    status: true;
+    vehicleCategory: true;
+    vehicleModel: true;
+    vehicleMake: true;
+    vehicleVersion: true;
+    publicationMediaResources: true;
+  };
+}>;
 
 export interface IPublicationService {
-  findAll(query?: any): Promise<any[]>;
-  findById(id: number): Promise<any | null>;
-  create(data: any): Promise<any>;
-  update(id: number, data: any): Promise<any | null>;
+  findAll(query?: any): Promise<PublicationWithRelations[]>;
+  findById(id: number): Promise<PublicationWithRelations | null>;
+  create(data: any): Promise<PublicationWithRelations>;
+  update(id: number, data: any): Promise<PublicationWithRelations | null>;
   delete(id: number): Promise<void>;
-  findOne(query: any): Promise<any | null>;
+  findOne(query: any): Promise<PublicationWithRelations | null>;
 }
 
 export class PublicationController {
@@ -167,18 +181,18 @@ export class PublicationController {
   //   }
   // }
 
-  // public async createPublication(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const publication = await this.publicationService.create(req.body);
-  //     res.status(201).json(publication);
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unknown error occurred" });
-  //     }
-  //   }
-  // }
+  createPublication = async (req: Request, res: Response) => {
+    try {
+      const publication = await this.publicationService.create(req.body);
+      res.status(201).json(publication);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unknown error occurred" });
+      }
+    }
+  }
 
   // public async updatePublication(req: Request, res: Response): Promise<void> {
   //   try {
