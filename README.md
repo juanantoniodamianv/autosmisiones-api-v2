@@ -54,6 +54,12 @@ npx prisma migrate reset
 ```
 ⚠️ **Cuidado:** Este comando elimina todos los datos y aplica todas las migraciones desde cero.
 
+#### Cargar datos de prueba (seeds)
+```bash
+npm run prisma:seed
+```
+Carga datos de prueba en la base de datos usando el archivo `prisma/seed.ts`. Útil para poblar la base de datos con datos iniciales para desarrollo y testing.
+
 #### Abrir Prisma Studio
 ```bash
 npx prisma studio
