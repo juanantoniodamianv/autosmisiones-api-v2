@@ -1,19 +1,5 @@
-import { IPublicationService } from "../controllers/PublicationController";
+import { IPublicationService, PublicationWithRelations } from "../controllers/PublicationController";
 import { PublicationRepository } from "../repositories/Publication";
-import { Prisma } from "@prisma/client";
-
-type PublicationWithRelations = Prisma.PublicationGetPayload<{
-  include: {
-    person: true;
-    city: true;
-    status: true;
-    vehicleCategory: true;
-    vehicleModel: true;
-    vehicleMake: true;
-    vehicleVersion: true;
-    publicationMediaResources: true;
-  };
-}>;
 
 export class PublicationService implements IPublicationService {
   publication = new PublicationRepository();

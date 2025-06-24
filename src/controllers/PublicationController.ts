@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
 
-type PublicationWithRelations = Prisma.PublicationGetPayload<{
+export type PublicationWithRelations = Prisma.PublicationGetPayload<{
   include: {
     person: true;
     city: true;
