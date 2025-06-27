@@ -1,15 +1,15 @@
 export interface ILocationService {
   getAllProvinces(): Promise<any[]>;
-  getCitiesByProvince(provinceId: string): Promise<any[]>;
+  getCitiesByProvince(provinceId: number): Promise<any[]>;
 }
 
 export interface Province {
-  id: string;
+  id: number;
   name: string;
 }
 
 export interface City {
-  id: string;
+  id: number;
   name: string;
-  provinceId: string;
+  provinceId: number;
 }

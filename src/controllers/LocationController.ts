@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 export interface ILocationService {
   getAllProvinces(): Promise<any[]>;
-  getCitiesByProvince(categoryId: string): Promise<any[]>;
+  getCitiesByProvince(provinceId: number): Promise<any[]>;
 }
 
 export class LocationController {
@@ -40,7 +40,7 @@ export class LocationController {
         });
       }
       const cities = await this.locationService.getCitiesByProvince(
-        provinceId.toString()
+        Number(provinceId)
       );
       res.status(200).json({
         success: true,

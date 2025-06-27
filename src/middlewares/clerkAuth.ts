@@ -7,6 +7,18 @@ const prisma = new PrismaClient();
 const clerkMiddleware = ClerkExpressRequireAuth();
 
 export const clerkAuth = (req: Request, res: Response, next: NextFunction) => {
+  // Debug logs
+  console.log('🔍 Clerk Auth Debug:');
+  console.log('- Authorization header:', req.headers.authorization ? 'Present' : 'Missing');
+  console.log('- Cookies present:', !!req.cookies);
+  console.log('- __session cookie:', req.cookies?.['__session'] ? 'Present' : 'Missing');
+  
+  // Extract token from __session cookie if not in Authorization header
+  if (!req.headers.authorization && req.cookies && req.cookies['__session']) {
+    console.log('✅ Setting Authorization header from __session cookie');
+    req.headers.authorization = `Bearer ${req.cookies['__session']}`;
+  }
+  
   return clerkMiddleware(req, res, next);
 };
 

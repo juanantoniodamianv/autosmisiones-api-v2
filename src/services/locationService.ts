@@ -1,25 +1,21 @@
 import { ILocationService } from "../controllers/LocationController";
 import { CityRepository } from "../repositories/City";
 import { ProvinceRepository } from "../repositories/Province";
+import { City, Province } from "./interfaces/ILocationService";
 
 export class LocationService implements ILocationService {
   province = new ProvinceRepository();
   city = new CityRepository();
 
-  // TODO: should we use a proper response typing here, ex: Promise<Province[]>
   async getAllProvinces(): Promise<
-    {
-      name: string;
-      id: number;
-    }[]
+    Province[]
   > {
     return await this.province.findAll();
   }
 
-  // TODO: same here
   async getCitiesByProvince(
-    provinceId: string
-  ): Promise<{ name: string; id: number; provinceId: number }[]> {
+    provinceId: number
+  ): Promise<City[]> {
     return await this.city.findAll({ provinceId: provinceId });
   }
 }

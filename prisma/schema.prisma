@@ -48,6 +48,9 @@ model Publication {
   ownerPhone     String?
   marketDiscount Boolean @default(false)
 
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
   personId Int
   person   Person @relation(fields: [personId], references: [id])
 

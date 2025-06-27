@@ -3,6 +3,7 @@ import express from "express";
 import { PublicationController } from "../controllers/PublicationController";
 import { MockPublicationService } from "../services/mock/mockPublicationService";
 import { PublicationService } from "../services/publicationService";
+import { clerkAuth, syncClerkUser } from "../middlewares/clerkAuth";
 
 const router = express.Router();
 
@@ -53,6 +54,8 @@ router.get("/", publicationController.getAllPublications);
  *   post:
  *     summary: Create a new publication
  *     tags: [Publications]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -62,8 +65,6 @@ router.get("/", publicationController.getAllPublications);
  *             required:
  *               - title
  *               - condition
- *               - slugUrl
- *               - personId
  *               - cityId
  *               - statusId
  *               - uniqueOwner
@@ -130,10 +131,6 @@ router.get("/", publicationController.getAllPublications);
  *                 type: boolean
  *                 description: Whether the vehicle has a unique owner
  *                 example: true
- *               slugUrl:
- *                 type: string
- *                 description: The URL slug for the publication
- *                 example: "toyota-corolla-2020"
  *               swap:
  *                 type: boolean
  *                 description: Whether the vehicle is available for swap
@@ -146,10 +143,6 @@ router.get("/", publicationController.getAllPublications);
  *                 type: boolean
  *                 description: Whether the publication has market discount
  *                 example: true
- *               personId:
- *                 type: number
- *                 description: The ID of the person creating the publication
- *                 example: 1
  *               cityId:
  *                 type: number
  *                 description: The ID of the city where the vehicle is located
@@ -204,13 +197,135 @@ router.get("/", publicationController.getAllPublications);
  *                   description: Last update timestamp
  *       400:
  *         description: Bad request - Invalid data provided
+ *       401:
+ *         description: Unauthorized - Authentication required
  *       500:
  *         description: Server error
  */
-router.post("/", (req, res) => {
+router.post("/", clerkAuth, syncClerkUser, (req, res) => {
   publicationController.createPublication(req, res);
 });
-// router.put("/:id", publicationController.updatePublication);
-// router.delete("/:id", publicationController.deletePublication);
+
+/**
+ * @swagger
+ * /api/publications/{id}:
+ *   put:
+ *     summary: Update a publication
+ *     tags: [Publications]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The publication ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The publication title
+ *               description:
+ *                 type: string
+ *                 description: The publication description
+ *               price:
+ *                 type: number
+ *                 description: The vehicle price
+ *               condition:
+ *                 type: string
+ *                 description: The vehicle condition
+ *     responses:
+ *       200:
+ *         description: Publication updated successfully
+ *       400:
+ *         description: Bad request - Invalid data provided
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *       403:
+ *         description: Forbidden - You can only update your own publications
+ *       404:
+ *         description: Publication not found
+ *       500:
+ *         description: Server error
+ */
+router.put("/:id", clerkAuth, syncClerkUser, (req, res) => {
+  publicationController.updatePublication(req, res);
+});
+
+/**
+ * @swagger
+ * /api/publications/{id}:
+ *   delete:
+ *     summary: Delete a publication
+ *     tags: [Publications]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The publication ID
+ *     responses:
+ *       204:
+ *         description: Publication deleted successfully
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *       403:
+ *         description: Forbidden - You can only delete your own publications
+ *       404:
+ *         description: Publication not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/:id", clerkAuth, syncClerkUser, (req, res) => {
+  publicationController.deletePublication(req, res);
+});
+
+/**
+ * @swagger
+ * /api/publications/slug/{slugUrl}:
+ *   get:
+ *     summary: Get publication by slug URL
+ *     tags: [Publications]
+ *     parameters:
+ *       - in: path
+ *         name: slugUrl
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The publication slug URL
+ *     responses:
+ *       200:
+ *         description: Publication found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                   description: The publication ID
+ *                 title:
+ *                   type: string
+ *                   description: The publication title
+ *                 slugUrl:
+ *                   type: string
+ *                   description: The publication slug URL
+ *       404:
+ *         description: Publication not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/slug/:slugUrl", (req, res) => {
+  publicationController.getPublicationBySlug(req, res);
+});
 
 export default router;
