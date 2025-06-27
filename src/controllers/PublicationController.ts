@@ -31,7 +31,6 @@ export class PublicationController {
         minPrice,
         maxPrice,
         city,
-        province,
         status,
         sortBy = "createdAt",
         sortOrder = "desc",

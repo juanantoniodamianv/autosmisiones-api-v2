@@ -17,7 +17,7 @@ describe("Location Service", () => {
   });
 
   it("should return cities for province", async () => {
-    const cities = await service.getCitiesByProvince("1");
+    const cities = await service.getCitiesByProvince(1);
     assert.strictEqual(cities.length, 2);
     assert.strictEqual(cities[0].name, "Toronto");
   });

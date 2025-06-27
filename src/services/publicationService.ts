@@ -1,7 +1,7 @@
 import { IPublicationService } from "../controllers/PublicationController";
 import { PublicationRepository } from "../repositories/Publication";
 import { Request } from "express";
-import { generatePublicationSlug } from "../utils/slugGenerator";
+import { generatePublicationSlug, cleanPublicationData } from "../utils";
 import { prisma } from "../repositories/base";
 import { PublicationWithRelations } from "../types";
 
@@ -31,49 +31,52 @@ export class PublicationService implements IPublicationService {
       throw new Error("User not authenticated");
     }
 
+    // Add personId from authenticated user
+    data.personId = personId;
+
+    // Clean the data using utility
+    const cleanedData = cleanPublicationData(data);
+
     // Validate required fields
     const requiredFields = ['title', 'condition', 'cityId', 'statusId'];
-    const missingFields = requiredFields.filter(field => !data[field]);
+    const missingFields = requiredFields.filter(field => !cleanedData[field]);
     
     if (missingFields.length > 0) {
       throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
-    // Add personId from authenticated user
-    data.personId = personId;
-
     // Generate slugUrl automatically if not provided
-    if (!data.slugUrl) {
+    if (!cleanedData.slugUrl) {
       let makeName: string | undefined;
       let modelName: string | undefined;
       let year: number | undefined;
 
       // If we have vehicle IDs, fetch the names
-      if (data.vehicleMakeId) {
+      if (cleanedData.vehicleMakeId) {
         const make = await prisma.vehicleMake.findUnique({
-          where: { id: data.vehicleMakeId }
+          where: { id: cleanedData.vehicleMakeId }
         });
         makeName = make?.name;
       }
 
-      if (data.vehicleModelId) {
+      if (cleanedData.vehicleModelId) {
         const model = await prisma.vehicleModel.findUnique({
-          where: { id: data.vehicleModelId }
+          where: { id: cleanedData.vehicleModelId }
         });
         modelName = model?.name;
       }
 
-      year = data.year;
+      year = cleanedData.year;
 
-      data.slugUrl = await generatePublicationSlug(
+      cleanedData.slugUrl = await generatePublicationSlug(
         makeName,
         modelName,
         year,
-        data.title
+        cleanedData.title
       );
     }
 
-    return await this.publication.create(data);
+    return await this.publication.create(cleanedData);
   }
 
   async update(id: number, data: any, req?: Request): Promise<PublicationWithRelations | null> {
@@ -93,42 +96,45 @@ export class PublicationService implements IPublicationService {
       throw new Error("Unauthorized: You can only update your own publications");
     }
 
+    // Clean the data using utility
+    const cleanedData = cleanPublicationData(data);
+
     // If updating vehicle data or title, regenerate slug
-    if (data.vehicleMakeId || data.vehicleModelId || data.year || data.title) {
+    if (cleanedData.vehicleMakeId || cleanedData.vehicleModelId || cleanedData.year || cleanedData.title) {
       let makeName: string | undefined;
       let modelName: string | undefined;
       let year: number | undefined;
 
       // Use new data or fall back to current data
-      if (data.vehicleMakeId) {
+      if (cleanedData.vehicleMakeId) {
         const make = await prisma.vehicleMake.findUnique({
-          where: { id: data.vehicleMakeId }
+          where: { id: cleanedData.vehicleMakeId }
         });
         makeName = make?.name;
       } else {
         makeName = existingPublication.vehicleMake?.name;
       }
 
-      if (data.vehicleModelId) {
+      if (cleanedData.vehicleModelId) {
         const model = await prisma.vehicleModel.findUnique({
-          where: { id: data.vehicleModelId }
+          where: { id: cleanedData.vehicleModelId }
         });
         modelName = model?.name;
       } else {
         modelName = existingPublication.vehicleModel?.name;
       }
 
-      year = data.year || existingPublication.year;
+      year = cleanedData.year || existingPublication.year;
 
-      data.slugUrl = await generatePublicationSlug(
+      cleanedData.slugUrl = await generatePublicationSlug(
         makeName,
         modelName,
         year,
-        data.title || existingPublication.title
+        cleanedData.title || existingPublication.title
       );
     }
 
-    return await this.publication.update(id, data);
+    return await this.publication.update(id, cleanedData);
   }
 
   async delete(id: number, req?: Request): Promise<void> {
