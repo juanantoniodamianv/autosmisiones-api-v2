@@ -50,6 +50,33 @@ router.get("/", publicationController.getAllPublications);
 
 /**
  * @swagger
+ * /api/protected/publications/user/:personId:
+ *   get:
+ *     summary: Get all publications for the authenticated user
+ *     tags: [Publications]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user's publications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Publication'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.get("/publicationsUser/:personId", clerkAuth, syncClerkUser, (req, res) => {
+  publicationController.getMyPublications(req, res);
+});
+
+
+/**
+ * @swagger
  * /api/publications:
  *   post:
  *     summary: Create a new publication

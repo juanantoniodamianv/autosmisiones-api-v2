@@ -136,6 +136,29 @@ export class PublicationController {
     }
   };
 
+  getMyPublications = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const personId = req.params;
+
+      if (!personId) {
+        res.status(401).json({ error: "Usuario no autenticado o no sincronizado" });
+        return;
+      }
+
+      const myPublications = await this.publicationService.findAll({ personId });
+
+      res.json(myPublications);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Ocurrió un error desconocido" });
+      }
+    }
+  };
+
+
+
   getPublicationBySlug = async (req: Request, res: Response): Promise<void> => {
     try {
       const { slugUrl } = req.params;
