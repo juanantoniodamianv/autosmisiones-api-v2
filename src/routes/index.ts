@@ -4,6 +4,7 @@ import { vehicleDataRoutes } from "./vehicleDataRoutes";
 import { locationRoutes } from "./locationRoutes";
 import { protectedRoutes } from "./protectedRoutes";
 import publicationRoutes from "./publicationRoutes";
+import uploadRoutes from "./uploadRoutes";
 
 const apiRouter = Router();
 
@@ -17,5 +18,6 @@ apiRouter.get('/health', (req, res) => {
 apiRouter.use("/vehicles", vehicleDataRoutes);
 apiRouter.use("/locations", locationRoutes);
 apiRouter.use("/publications", publicationRoutes);
+apiRouter.use("/upload", uploadRoutes);
 
 export { apiRouter };
