@@ -1,5 +1,5 @@
 import { prisma } from "./base";
-import { PublicationWithRelations } from "../types/publication";
+import { PublicationWithRelations, UpdatePublicationData } from "../types/publication";
 
 class PublicationRepository {
   async findAll(where?: any): Promise<PublicationWithRelations[]> {
@@ -92,7 +92,7 @@ class PublicationRepository {
     return publicationWithRelations;
   }
 
-  async update(id: number, data: any): Promise<PublicationWithRelations> {
+  async update(id: number, data: UpdatePublicationData): Promise<PublicationWithRelations> {
     return await prisma.publication.update({
       where: { id },
       data,

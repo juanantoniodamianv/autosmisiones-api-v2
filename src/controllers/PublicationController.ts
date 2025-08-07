@@ -7,6 +7,7 @@ export interface IPublicationService {
   findBySlug(slugUrl: string): Promise<PublicationWithRelations | null>;
   create(data: any, req?: Request): Promise<PublicationWithRelations>;
   update(id: number, data: any, req?: Request): Promise<PublicationWithRelations | null>;
+  patch(id: number, data: any, req?: Request): Promise<PublicationWithRelations | null>;
   delete(id: number, req?: Request): Promise<void>;
   findOne(query: any): Promise<PublicationWithRelations | null>;
 }
@@ -138,14 +139,14 @@ export class PublicationController {
 
   getMyPublications = async (req: Request, res: Response): Promise<void> => {
     try {
-      const personId = req.params;
+      const personId = req.params.personId;
 
       if (!personId) {
         res.status(401).json({ error: "Usuario no autenticado o no sincronizado" });
         return;
-      }
+      }      
 
-      const myPublications = await this.publicationService.findAll({ personId });
+      const myPublications = await this.publicationService.findAll({ personId: parseInt(personId) });
 
       res.json(myPublications);
     } catch (error: unknown) {
@@ -195,6 +196,24 @@ export class PublicationController {
     try {
       const publicationId = parseInt(req.params.id);
       const publication = await this.publicationService.update(publicationId, req.body, req);
+      if (publication) {
+        res.json(publication);
+      } else {
+        res.status(404).json({ error: "Publication not found" });
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unknown error occurred" });
+      }
+    }
+  }
+
+  patchPublication = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const publicationId = parseInt(req.params.id);
+      const publication = await this.publicationService.patch(publicationId, req.body, req);
       if (publication) {
         res.json(publication);
       } else {

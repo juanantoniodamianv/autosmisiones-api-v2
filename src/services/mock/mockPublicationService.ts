@@ -246,26 +246,40 @@ export class MockPublicationService implements IPublicationService {
     return this.simulateDelay(publication);
   }
 
-  async update(id: number, data: any, req?: Request): Promise<PublicationWithRelations | null> {
-    const publicationIndex = this.publications.findIndex((p) => p.id === id);
+  async update(id: number, data: any): Promise<PublicationWithRelations | null> {
+    await this.simulateDelay(null);
+    
+    const publicationIndex = this.publications.findIndex(p => p.id === id);
     if (publicationIndex === -1) {
       return null;
     }
 
-    // Check ownership if personId is provided
-    if ((req as any)?.person?.id) {
-      const publication = this.publications[publicationIndex];
-      if (publication.personId !== (req as any).person.id) {
-        throw new Error("Unauthorized: You can only update your own publications");
-      }
-    }
-
+    // Update the publication with new data
     this.publications[publicationIndex] = {
       ...this.publications[publicationIndex],
       ...data,
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
-    return this.simulateDelay(this.publications[publicationIndex]);
+
+    return this.publications[publicationIndex];
+  }
+
+  async patch(id: number, data: any): Promise<PublicationWithRelations | null> {
+    await this.simulateDelay(null);
+    
+    const publicationIndex = this.publications.findIndex(p => p.id === id);
+    if (publicationIndex === -1) {
+      return null;
+    }
+
+    // Update only the provided fields (partial update)
+    this.publications[publicationIndex] = {
+      ...this.publications[publicationIndex],
+      ...data,
+      updatedAt: new Date()
+    };
+
+    return this.publications[publicationIndex];
   }
 
   async delete(id: number, req?: Request): Promise<void> {
